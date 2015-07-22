@@ -8,6 +8,21 @@ import java.sql.Statement;
 
 import me.vik1395.BungeeAuth.Utils.Database;
 
+/*
+
+Author: Vik1395
+Project: BungeeAuth
+
+Copyright 2015
+
+Licensed under Creative CommonsAttribution-ShareAlike 4.0 International Public License (the "License");
+You may not use this file except in compliance with the License.
+
+You may obtain a copy of the License at http://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+You may find an abridged version of the License at http://creativecommons.org/licenses/by-sa/4.0/
+ */
+
 /**
  * Connects to and uses a MySQL database
  * 

@@ -13,7 +13,7 @@ import javax.crypto.spec.PBEKeySpec;
 Author: Vik1395
 Project: BungeeAuth
 
-Copyright 2014
+Copyright 2015
 
 Licensed under Creative CommonsAttribution-ShareAlike 4.0 International Public License (the "License");
 You may not use this file except in compliance with the License.

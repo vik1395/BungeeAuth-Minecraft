@@ -7,13 +7,14 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 
 /*
 
 Author: Vik1395
 Project: BungeeAuth
 
-Copyright 2014
+Copyright 2015
 
 Licensed under Creative CommonsAttribution-ShareAlike 4.0 International Public License (the "License");
 You may not use this file except in compliance with the License.
@@ -23,10 +24,17 @@ You may obtain a copy of the License at http://creativecommons.org/licenses/by-s
 You may find an abridged version of the License at http://creativecommons.org/licenses/by-sa/4.0/
  */
 
-public class Login 
+public class Login extends Command
 {
+	public Login() 
+	{
+		super("login");
+	}
+
 	Tables ct = new Tables();
-	public void onCommand(CommandSender s, String args[])
+	
+	@Override
+	public void execute(CommandSender s, String[] args) 
 	{
 		if(s instanceof ProxiedPlayer)
 		{
@@ -46,9 +54,7 @@ public class Login
 			
 			else
 			{
-				
 				pCheck = ct.checkPlayerEntry(pName);
-				
 				
 				if(!pCheck)
 				{

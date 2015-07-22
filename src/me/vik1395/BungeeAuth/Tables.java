@@ -17,7 +17,7 @@ import me.vik1395.BungeeAuth.Utils.MySQL;
 Author: Vik1395
 Project: BungeeAuth
 
-Copyright 2014
+Copyright 2015
 
 Licensed under Creative CommonsAttribution-ShareAlike 4.0 International Public License (the "License");
 You may not use this file except in compliance with the License.
@@ -63,6 +63,8 @@ public class Tables
 			
 		}
 		
+		statement.close();
+		c.close();
 		MySQL.closeConnection();
 	}
 	
@@ -92,6 +94,10 @@ public class Tables
 			statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
 					+ "'6','player@localhost','1.1.1.1','1.1.1.1','1.0.1','ver'" +");");
 		}
+		
+		statement.close();
+		c.close();
+		MySQL.closeConnection();
 	}
 	
 	public void Update2() throws SQLException
@@ -114,6 +120,10 @@ public class Tables
 			statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
 					+ "'6','player@localhost','1.1.1.1','1.1.1.1','1.0.1','ver'" +");");
 		}
+		
+		statement.close();
+		c.close();
+		MySQL.closeConnection();
 	}
 	
 	
@@ -136,10 +146,16 @@ public class Tables
 		{
 			check=true;
 		}
+		
+		statement.close();
+		c.close();
+		
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.err.println("[BungeeAuth] There is a problem with the connection to the MySQL Database!");
 		}
+		
+		MySQL.closeConnection();
 		
 		return check;
 	}
@@ -151,7 +167,9 @@ public class Tables
 		c = MySQL.openConnection();
 		Statement statement = c.createStatement();
 		statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `registerdate`, `lastip`, `lastseen`, `version`, `status`) VALUES ('" + player.toLowerCase() + "','" + phash + "','" + ptype +  "','" + email + "','" + regip + "','" + regdate + "','" + lastip + "','" + lastseen + "','1.0','logout'" +");");
-		
+		statement.close();
+		c.close();
+		MySQL.closeConnection();
 	}
 	
 	public void removePlayerEntry(String playername)
@@ -163,11 +181,14 @@ public class Tables
 		{
 			Statement statement = c.createStatement();
 			statement.execute("DELETE FROM BungeeAuth WHERE playername='" + playername.toLowerCase() + "';");
+			statement.close();
+			c.close();
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
+		MySQL.closeConnection();
 	}
 	
 	public String getPassword(String playername)
@@ -194,11 +215,16 @@ public class Tables
 			{
 				hashedPW = "";
 			}
+			
+			statement.close();
+			c.close();
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
+		
+		MySQL.closeConnection();
 		return hashedPW;
 	}
 	
@@ -226,11 +252,16 @@ public class Tables
 			{
 				pwType = "";
 			}
+			
+			statement.close();
+			c.close();
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
+		
+		MySQL.closeConnection();
 		return pwType;
 	}
 	
@@ -243,11 +274,15 @@ public class Tables
 		{
 			Statement statement = c.createStatement();
 			statement.execute("UPDATE BungeeAuth SET password='" + newPw + "' WHERE playername='" + playername.toLowerCase() + "';");
+			statement.close();
+			c.close();
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
+		
+		MySQL.closeConnection();
 	}
 	
 	public Date getLastSeen(String playername)
@@ -274,6 +309,9 @@ public class Tables
 			{
 				lastseen = "";
 			}
+			
+			statement.close();
+			c.close();
 		}
 		catch(SQLException e)
 		{
@@ -292,6 +330,7 @@ public class Tables
 			System.err.println("[BungeeAuth] Unable to parse last seen data from MySQL database for " + playername);
 		}
 		
+		MySQL.closeConnection();
 		return lastseendate;
 	}
 	
@@ -319,12 +358,16 @@ public class Tables
 			{
 				lastip = "";
 			}
+			
+			statement.close();
+			c.close();
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
 		
+		MySQL.closeConnection();
 		return lastip;
 	}
 	
@@ -352,11 +395,16 @@ public class Tables
 			{
 				status = "";
 			}
+			
+			statement.close();
+			c.close();
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
+		
+		MySQL.closeConnection();
 		return status;
 	}
 	public void setStatus(String playername, String status)
@@ -368,11 +416,16 @@ public class Tables
 		{
 			Statement statement = c.createStatement();
 			statement.execute("UPDATE BungeeAuth SET status='" + status + "' WHERE playername='" + playername.toLowerCase() + "';");
+			
+			statement.close();
+			c.close();
 		}
 		catch(SQLException e)
 		{
 			e.printStackTrace();
 		}
+		
+		MySQL.closeConnection();
 	}
 	public void setLastSeen(String playername, String ip)
 	{
@@ -388,10 +441,15 @@ public class Tables
 			Statement statement = c.createStatement();
 			statement.execute("UPDATE BungeeAuth SET lastip='" + ip + "' WHERE playername='" + playername.toLowerCase() + "';");
 			statement.execute("UPDATE BungeeAuth SET lastseen='" + seen + "' WHERE playername='" + playername.toLowerCase() + "';");
+			
+			statement.close();
+			c.close();
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
+		
+		MySQL.closeConnection();
 	}
 }

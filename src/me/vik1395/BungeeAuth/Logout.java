@@ -20,12 +20,33 @@ You may find an abridged version of the License at http://creativecommons.org/li
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 
-public class Logout 
+/*
+
+Author: Vik1395
+Project: BungeeAuth
+
+Copyright 2015
+
+Licensed under Creative CommonsAttribution-ShareAlike 4.0 International Public License (the "License");
+You may not use this file except in compliance with the License.
+
+You may obtain a copy of the License at http://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+You may find an abridged version of the License at http://creativecommons.org/licenses/by-sa/4.0/
+ */
+
+public class Logout extends Command
 {
+	public Logout() {
+		super("logout");
+	}
+
 	Tables ct = new Tables();
 	
-	public void onCommand(CommandSender s) 
+	@Override
+	public void execute(CommandSender s, String[] args) 
 	{
 		if(s instanceof ProxiedPlayer)
 		{
@@ -33,7 +54,7 @@ public class Logout
 			String status = ct.getStatus(p.getName());
 		    if(status.equalsIgnoreCase("online")||Main.plonline.contains(p.getName()))
 		    {
-		    	ct.setStatus(p.getName(), "preauth");
+		    	ct.setStatus(p.getName(), "logout");
 		    	if(Main.plonline.contains(p.getName()))
 			    {
 		    		Main.plonline.remove(p.getName());
