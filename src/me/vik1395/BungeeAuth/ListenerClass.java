@@ -14,6 +14,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
@@ -32,7 +33,7 @@ You may obtain a copy of the License at http://creativecommons.org/licenses/by-s
 You may find an abridged version of the License at http://creativecommons.org/licenses/by-sa/4.0/
  */
 
-public class Listener 
+public class ListenerClass implements Listener
 {
 	Tables ct = new Tables();
 	

@@ -22,7 +22,7 @@ You may obtain a copy of the License at http://creativecommons.org/licenses/by-s
 You may find an abridged version of the License at http://creativecommons.org/licenses/by-sa/4.0/
  */
 
-public class Main extends Plugin implements Listener
+public class Main extends Plugin
 {
 	Tables ct = new Tables();
 	Login ln = new Login();
@@ -30,7 +30,7 @@ public class Main extends Plugin implements Listener
 	
 	public void onEnable()
 	{
-        getProxy().getPluginManager().registerListener(this, this);
+        getProxy().getPluginManager().registerListener(this, new ListenerClass());
 		plugin = this;
 		
 		YamlGenerator yg = new YamlGenerator();

@@ -55,6 +55,7 @@ public class Logout extends Command
 		    if(status.equalsIgnoreCase("online")||Main.plonline.contains(p.getName()))
 		    {
 		    	ct.setStatus(p.getName(), "logout");
+		    	ct.setLastSeen(p.getName(), "0.0.0.0");
 		    	if(Main.plonline.contains(p.getName()))
 			    {
 		    		Main.plonline.remove(p.getName());
