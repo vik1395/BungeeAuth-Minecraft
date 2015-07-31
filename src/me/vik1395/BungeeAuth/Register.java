@@ -31,7 +31,7 @@ public class Register extends Command
 {
 	public Register() 
 	{
-		super("register");
+		super("register", "");
 	}
 
 	@Override

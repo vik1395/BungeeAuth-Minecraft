@@ -30,7 +30,7 @@ public class ResetPlayer extends Command
 {
 	public ResetPlayer() 
 	{
-		super("reset");
+		super("reset", "");
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class ResetPlayer extends Command
 						String pType = "" + rand.nextInt(maxp+1);
 						String hash = ph.newHash(pw, pType);
 						
-						t.updatePassword(pName, hash);
+						t.updatePassword(pName, hash, pType);
 						p.sendMessage(new ComponentBuilder("Successfully changed " + pName + "'s password to '" + pw + "' .").color(ChatColor.GOLD).create());
 						try
 						{

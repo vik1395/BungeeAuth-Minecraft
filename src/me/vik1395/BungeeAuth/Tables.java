@@ -265,7 +265,7 @@ public class Tables
 		return pwType;
 	}
 	
-	public void updatePassword(String playername, String newPw)
+	public void updatePassword(String playername, String newPw, String pwType)
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -273,7 +273,7 @@ public class Tables
 		try
 		{
 			Statement statement = c.createStatement();
-			statement.execute("UPDATE BungeeAuth SET password='" + newPw + "' WHERE playername='" + playername.toLowerCase() + "';");
+			statement.execute("UPDATE BungeeAuth SET password='" + newPw + "',pwtype='" + pwType + "' WHERE playername='" + playername.toLowerCase() + "';");
 			statement.close();
 			c.close();
 		}
@@ -427,20 +427,28 @@ public class Tables
 		
 		MySQL.closeConnection();
 	}
-	public void setLastSeen(String playername, String ip)
+	public void setLastSeen(String playername, String ip, String date)
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
 		c = MySQL.openConnection();
 		
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-		String seen = df.format(new Date());
+		if(date==null)
+		{
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+			date = df.format(new Date());
+		}
+		
+		if(ip==null)
+		{
+			ip="1.1.1.1";
+		}
 		
 		try
 		{
 			Statement statement = c.createStatement();
 			statement.execute("UPDATE BungeeAuth SET lastip='" + ip + "' WHERE playername='" + playername.toLowerCase() + "';");
-			statement.execute("UPDATE BungeeAuth SET lastseen='" + seen + "' WHERE playername='" + playername.toLowerCase() + "';");
+			statement.execute("UPDATE BungeeAuth SET lastseen='" + date + "' WHERE playername='" + playername.toLowerCase() + "';");
 			
 			statement.close();
 			c.close();

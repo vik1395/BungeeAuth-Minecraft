@@ -28,7 +28,7 @@ public class Login extends Command
 {
 	public Login() 
 	{
-		super("login");
+		super("login", "");
 	}
 
 	Tables ct = new Tables();
@@ -98,30 +98,7 @@ public class Login extends Command
 						{
 							Main.plonline.add(p.getName());
 							ct.setStatus(p.getName(), "online");
-							ProxyServer ps = Main.plugin.getProxy();
-							if(!(ps.getServerInfo(Main.lobby)==null))
-							{
-								ServerInfo sinf = ps.getServerInfo(Main.lobby);
-								String sname = p.getServer().getInfo().getName();
-								if(!sname.equals(Main.lobby))
-								{
-									p.connect(sinf);
-								}
-							}
-							else if(!(ps.getServerInfo(Main.lobby2)==null))
-							{
-								ServerInfo sinf = ps.getServerInfo(Main.lobby2);
-								String sname = p.getServer().getInfo().getName();
-								if(!sname.equals(Main.lobby2))
-								{
-									p.connect(sinf);
-								}
-							}
-							else
-							{
-								p.sendMessage(new ComponentBuilder("Error! Unable to connect to AuthLobby.").color(ChatColor.DARK_RED).create());
-								System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
-							}
+							ListenerClass.movePlayer(p, false);
 							p.sendMessage(new ComponentBuilder("You have logged in successfully! You may now chat and use commands.").color(ChatColor.GREEN).create());
 						}
 					}

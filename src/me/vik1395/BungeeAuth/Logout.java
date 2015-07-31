@@ -39,8 +39,9 @@ You may find an abridged version of the License at http://creativecommons.org/li
 
 public class Logout extends Command
 {
-	public Logout() {
-		super("logout");
+	public Logout() 
+	{
+		super("logout", "");
 	}
 
 	Tables ct = new Tables();
@@ -55,36 +56,13 @@ public class Logout extends Command
 		    if(status.equalsIgnoreCase("online")||Main.plonline.contains(p.getName()))
 		    {
 		    	ct.setStatus(p.getName(), "logout");
-		    	ct.setLastSeen(p.getName(), "0.0.0.0");
+		    	ct.setLastSeen(p.getName(), null, "1001-01-01 01:01:01");
 		    	if(Main.plonline.contains(p.getName()))
 			    {
 		    		Main.plonline.remove(p.getName());
 			    }
 		    	
-		    	ProxyServer ps = Main.plugin.getProxy();
-		    	String sname = p.getServer().getInfo().getName();
-				
-		    	if(!(ps.getServerInfo(Main.authlobby)==null))
-				{
-					ServerInfo sinf = ps.getServerInfo(Main.authlobby);
-					if(!sname.equals(Main.authlobby))
-					{
-						p.connect(sinf);
-					}
-				}
-				else if(!(ps.getServerInfo(Main.authlobby2)==null))
-				{
-					ServerInfo sinf = ps.getServerInfo(Main.authlobby2);
-					if(!sname.equals(Main.authlobby2))
-					{
-						p.connect(sinf);
-					}
-				}
-				else
-				{
-					p.sendMessage(new ComponentBuilder("Error! Unable to connect to AuthLobby.").color(ChatColor.DARK_RED).create());
-					System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
-				}
+				ListenerClass.movePlayer(p, true);
 				p.sendMessage(new ComponentBuilder("You have been successfully logged out!").color(ChatColor.GREEN).create());
 			}
 		    

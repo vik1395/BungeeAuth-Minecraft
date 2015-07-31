@@ -28,7 +28,7 @@ public class ChangePassword extends Command
 {
 	public ChangePassword()
 	{
-		super("changepw", "cpw", "changepassword", "changepass");
+		super("changepw", "", "cpw", "changepassword", "changepass");
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class ChangePassword extends Command
 						String pType = "" + rand.nextInt(maxp+1);
 						hash = ph.newHash(newPw, pType);
 						
-						t.updatePassword(pName, hash);
+						t.updatePassword(pName, hash, pType);
 						p.sendMessage(new ComponentBuilder("Password was changed successfully.").color(ChatColor.GOLD).create());
 					}
 				}

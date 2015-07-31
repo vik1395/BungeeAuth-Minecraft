@@ -3,8 +3,8 @@ package me.vik1395.BungeeAuth;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import me.vik1395.BungeeAuth.Utils.YamlGenerator;
-import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 
 /*
@@ -26,7 +26,7 @@ public class Main extends Plugin
 {
 	Tables ct = new Tables();
 	Login ln = new Login();
-	static List<String> plonline = new ArrayList<String>();
+	public static List<String> plonline = new ArrayList<String>();
 	
 	public void onEnable()
 	{
@@ -75,6 +75,17 @@ public class Main extends Plugin
 		getLogger().info("BungeeAuth has successfully started!");
 		getLogger().info("Created by Vik1395");
 		
+	}
+	
+	public void onDisable()
+	{
+		if(plonline.size()>0)
+		{
+			for(int i=0; i<plonline.size();i++)
+			{
+				ct.setLastSeen(plonline.get(i), null, "1001-01-01 01:01:01");
+			}
+		}
 	}
 	
 	public static Plugin plugin;
