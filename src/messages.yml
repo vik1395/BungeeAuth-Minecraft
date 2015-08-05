@@ -1,0 +1,22 @@
+# BungeeAuth's Messages File
+
+# You can configure messages sent by BungeeAuth here. 
+# Use "%player%" for player name. Player name only works for reset_noreg and reset_success.
+
+register: "You haven't registered yet! Please type /register [password]"
+reg_success: "Registration was successful. Please type /login [password] to start playing."
+already_reg: "You have already registered! please type /login [password]"
+
+login_success: "You have logged in successfully! You may now chat and use commands."
+already_in: "You are already logged in!"
+
+logout_success: "You have been successfully logged out!"
+already_out: "You have already logged out!"
+
+reset_noreg: "%player% has not been registered on this server."
+reset_success: "Successfully reset %player%'s password."
+no_perm: "You do not have permission to use this command!"
+
+pass_change_success: "Password was changed successfully."
+
+wrong_pass: "The password you entered is wrong! Please enter it again."

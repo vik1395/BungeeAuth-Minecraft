@@ -27,6 +27,12 @@ public class Main extends Plugin
 	Tables ct = new Tables();
 	Login ln = new Login();
 	public static List<String> plonline = new ArrayList<String>();
+	public static Plugin plugin;
+	public static int seshlength;
+	public static boolean email;
+	public static String authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
+    reg_success, already_reg, login_success, already_in, logout_success, already_out,
+    reset_noreg, reset_success, no_perm, pass_change_success, wrong_pass;
 	
 	public void onEnable()
 	{
@@ -34,27 +40,9 @@ public class Main extends Plugin
 		plugin = this;
 		
 		YamlGenerator yg = new YamlGenerator();
-	    yg.setup();
-	    
-		try 
-		{
-		    host = YamlGenerator.config.getString("Host");
-		    port = YamlGenerator.config.getString("Port");
-		    dbName = YamlGenerator.config.getString("DBName");
-		    username = YamlGenerator.config.getString("Username");
-		    pass = YamlGenerator.config.getString("Password");
-		    lobby = YamlGenerator.config.getString("Lobby");
-		    lobby2 = YamlGenerator.config.getString("Fallback Lobby");
-		    authlobby = YamlGenerator.config.getString("AuthLobby");
-		    authlobby2 = YamlGenerator.config.getString("Fallback AuthLobby");
-		    email  = YamlGenerator.config.getBoolean("Ask Email");
-		    seshlength = YamlGenerator.config.getInt("Session Length");
-		} 
-		catch(Exception ex) 
-		{
-		    System.err.println("[BungeeAuth] Your Config file is missing or broken. Please reset the file.");
-		    ex.printStackTrace();
-		}
+		yg.saveDefaultConfig();
+		yg.saveDefaultMessage();
+		loadYaml();
 		
 		try 
 		{
@@ -88,16 +76,31 @@ public class Main extends Plugin
 		}
 	}
 	
-	public static Plugin plugin;
-	public static String authlobby;
-	public static String authlobby2;
-	public static String lobby;
-	public static String lobby2;
-	public static String host;
-	public static String port;
-	public static String dbName;
-	public static String username;
-	public static String pass;
-	public static int seshlength;
-	public static boolean email;
+	public static void loadYaml()
+	{
+		host = YamlGenerator.config.getString("Host");
+	    port = YamlGenerator.config.getString("Port");
+	    dbName = YamlGenerator.config.getString("DBName");
+	    username = YamlGenerator.config.getString("Username");
+	    pass = YamlGenerator.config.getString("Password");
+	    lobby = YamlGenerator.config.getString("Lobby");
+	    lobby2 = YamlGenerator.config.getString("Fallback Lobby");
+	    authlobby = YamlGenerator.config.getString("AuthLobby");
+	    authlobby2 = YamlGenerator.config.getString("Fallback AuthLobby");
+	    email  = YamlGenerator.config.getBoolean("Ask Email");
+	    seshlength = YamlGenerator.config.getInt("Session Length");
+	    
+		register = YamlGenerator.message.getString("register");
+		reg_success = YamlGenerator.message.getString("reg_success");
+		already_reg = YamlGenerator.message.getString("already_reg");
+		login_success = YamlGenerator.message.getString("register");
+		already_in = YamlGenerator.message.getString("already_in");
+		logout_success = YamlGenerator.message.getString("logout_success");
+		already_out = YamlGenerator.message.getString("already_out");
+		reset_noreg = YamlGenerator.message.getString("reset_noreg");
+		reset_success = YamlGenerator.message.getString("reset_success");
+		no_perm = YamlGenerator.message.getString("no_perm");
+		pass_change_success = YamlGenerator.message.getString("pass_change_success");
+		wrong_pass = YamlGenerator.message.getString("wrong_pass");
+	}
 }

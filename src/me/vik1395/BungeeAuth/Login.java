@@ -3,9 +3,7 @@ package me.vik1395.BungeeAuth;
 import me.vik1395.BungeeAuth.Password.PasswordHandler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -42,15 +40,10 @@ public class Login extends Command
 			ProxiedPlayer p = (ProxiedPlayer)s;
 			String pName = p.getName();
 			String status = ct.getStatus(p.getName());
-		    if(status.equalsIgnoreCase("online"))
+		    if(status.equalsIgnoreCase("online") || Main.plonline.contains(p.getName()))
 		    {
-				p.sendMessage(new ComponentBuilder("You are already logged in!").color(ChatColor.GREEN).create());
+				p.sendMessage(new ComponentBuilder(Main.already_in).color(ChatColor.GREEN).create());
 			}
-		    
-		    else if(Main.plonline.contains(p.getName()))
-		    {
-		    	p.sendMessage(new ComponentBuilder("You are already logged in!").color(ChatColor.GREEN).create());
-		    }
 			
 			else
 			{
@@ -63,7 +56,7 @@ public class Login extends Command
 					{
 						emailCh = " [email]";
 					}
-					p.sendMessage(new ComponentBuilder("You haven't registered yet! Please type /register [password]" + emailCh).color(ChatColor.RED).create());
+					p.sendMessage(new ComponentBuilder(Main.register + emailCh).color(ChatColor.RED).create());
 				}
 				
 				else
@@ -91,7 +84,7 @@ public class Login extends Command
 						
 						if(!PwCheck)
 						{
-							p.sendMessage(new ComponentBuilder("The password you entered is wrong! Please enter it again.").color(ChatColor.RED).create());
+							p.sendMessage(new ComponentBuilder(Main.wrong_pass).color(ChatColor.RED).create());
 						}
 						
 						else
@@ -99,7 +92,7 @@ public class Login extends Command
 							Main.plonline.add(p.getName());
 							ct.setStatus(p.getName(), "online");
 							ListenerClass.movePlayer(p, false);
-							p.sendMessage(new ComponentBuilder("You have logged in successfully! You may now chat and use commands.").color(ChatColor.GREEN).create());
+							p.sendMessage(new ComponentBuilder(Main.login_success).color(ChatColor.GREEN).create());
 						}
 					}
 				}

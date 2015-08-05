@@ -1,0 +1,33 @@
+Host: 127.0.0.1
+# Please enter the Host of your MySQL Database here.
+
+Port: '3306'
+# Please enter the port where your MySQL Database is hosted.
+
+Username: root
+# The Username which should be used to auth against the Database.
+
+Password: 'pass'
+# The Password which should be used to auth against the Database. If you don't have a password, please leave two quotation marks (') in this field.
+
+DBName: Bungee
+#The name of the database where BungeeAuth's Tables shall be created.
+
+Lobby: Lobby
+# The name of the lobby server.
+
+Fallback Lobby: Lobby2
+# The name of the fallback lobby server in case the main lobby is down.
+
+AuthLobby: AuthLobby
+# The name of the lobby where players are pushed before they authenticate. leave it same as normal lobby if you don't have an auth lobby.
+
+Fallback AuthLobby: AuthLobby2
+# The name of the fallback AuthLobby server in case the main AuthLobby is down.
+
+Ask Email: False
+# Set this to True if you want the plugin to prompt users to register their email when they login to the server for the first time.
+
+Session Length: '5'
+# How long (in minutes) does the user's session remains running after a player quits. This allows the user to log back in within the time frame without
+# having to type their password again. If user logs in from a different IP, they will be asked to type their password again for security reasons.

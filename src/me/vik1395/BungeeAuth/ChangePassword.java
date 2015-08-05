@@ -60,7 +60,7 @@ public class ChangePassword extends Command
 					//checks if current password is correct
 					if(!ph.checkPassword(oldPw, pwType, pName))
 					{
-						p.sendMessage(new ComponentBuilder("The current password you entered is wrong! Please enter it again.").color(ChatColor.RED).create());
+						p.sendMessage(new ComponentBuilder(Main.wrong_pass).color(ChatColor.RED).create());
 					}
 					//Hashes new password
 					else
@@ -71,13 +71,13 @@ public class ChangePassword extends Command
 						hash = ph.newHash(newPw, pType);
 						
 						t.updatePassword(pName, hash, pType);
-						p.sendMessage(new ComponentBuilder("Password was changed successfully.").color(ChatColor.GOLD).create());
+						p.sendMessage(new ComponentBuilder(Main.pass_change_success).color(ChatColor.GOLD).create());
 					}
 				}
 			}
 			else
 			{
-				p.sendMessage(new ComponentBuilder("You have not registered yet. please use the /register command first.").color(ChatColor.RED).create());
+				p.sendMessage(new ComponentBuilder(Main.register).color(ChatColor.RED).create());
 			}
 		}
 	}

@@ -47,12 +47,12 @@ public class Register extends Command
 			
 			if(pCheck)
 			{
-				p.sendMessage(new ComponentBuilder("You have already registered! please type /login [password]").color(ChatColor.RED).create());
+				p.sendMessage(new ComponentBuilder(Main.already_reg).color(ChatColor.RED).create());
 			}
 			
 			else if(Main.plonline.contains(p.getName()))
 		    {
-		    	p.sendMessage(new ComponentBuilder("You are already logged in!").color(ChatColor.GREEN).create());
+		    	p.sendMessage(new ComponentBuilder(Main.already_in).color(ChatColor.GREEN).create());
 		    }
 			
 			else
@@ -109,7 +109,7 @@ public class Register extends Command
 					try 
 					{
 						t.newPlayerEntry(pName, hash, pType, email, regip, regdate, lastip, lastseen);
-						p.sendMessage(new ComponentBuilder("Registration was successful. Please type /login [password] to start playing.").color(ChatColor.GOLD).create());
+						p.sendMessage(new ComponentBuilder(Main.reg_success).color(ChatColor.GOLD).create());
 					} 
 					catch (SQLException e) 
 					{

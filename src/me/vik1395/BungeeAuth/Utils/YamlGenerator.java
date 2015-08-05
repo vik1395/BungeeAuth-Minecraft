@@ -1,9 +1,8 @@
 package me.vik1395.BungeeAuth.Utils;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import me.vik1395.BungeeAuth.Main;
 import net.md_5.bungee.config.Configuration;
@@ -28,74 +27,51 @@ You may find an abridged version of the License at http://creativecommons.org/li
 public class YamlGenerator 
 {
 	public static Configuration config;
-    public static ConfigurationProvider cProvider;
-    public static File cFile;
-    
-	public void setup()
+	public static Configuration message;
+	
+    public void saveDefaultConfig()
 	{
-		File cFolder = new File(Main.plugin.getDataFolder(),"");
+		File file = new File(Main.plugin.getDataFolder(), "config.yml");
+		ConfigurationProvider cProvider = ConfigurationProvider.getProvider(YamlConfiguration.class);
 		
-		if (!cFolder.exists()) 
+        if (!Main.plugin.getDataFolder().exists())
+        {
+			Main.plugin.getDataFolder().mkdir();
+        }
+		try
 		{
-	        cFolder.mkdir();
+	        if (!file.exists()) 
+	        {
+					Files.copy(Main.plugin.getResourceAsStream("config.yml"), file.toPath());
+	        }
+		    config = cProvider.load(file);
 		}
-		
-		cFile = new File(Main.plugin.getDataFolder() + "/config.yml");
-		
-		if (!cFile.exists()) 
-		{
-	        save();
-		}
-		
-		cProvider = ConfigurationProvider.getProvider(YamlConfiguration.class);
-	    try 
-	    {
-	        config = cProvider.load(cFile);
-	    } 
 	    catch (IOException e) 
 	    {
 	        e.printStackTrace();
 	    }
 	}
-	
-	public void save()
+    
+    public void saveDefaultMessage()
 	{
-		try 
+		File file = new File(Main.plugin.getDataFolder(), "messages.yml");
+		ConfigurationProvider cProvider = ConfigurationProvider.getProvider(YamlConfiguration.class);
+		
+        if (!Main.plugin.getDataFolder().exists())
         {
-        	String file = ""
-        			+ "Host: 127.0.0.1\n"
-        			+ "# Please enter the Host of your MySQL Database here.\n"
-        			+ "Port: \'3306\'\n"
-        			+ "# Please enter the port where your MySQL Database is hosted.\n"
-        			+ "Username: root\n"
-        			+ "# The Username which should be used to auth against the Database.\n"
-        			+ "Password: \'pass\'\n"
-        			+ "# The Password which should be used to auth against the Database. If you don't have a password, please leave two quotation marks (\') in this field.\n"
-        			+ "DBName: Bungee\n"
-        			+ "# The name of the database where BungeeAuth\'s Tables shall be created.\n"
-        			+ "Lobby: Lobby\n"
-        			+ "# The name of the lobby server.\n"
-        			+ "Fallback Lobby: Lobby2\n"
-        			+ "# The name of the fallback lobby server in case the main lobby is down.\n"
-        			+ "AuthLobby: AuthLobby\n"
-        			+ "# The name of the lobby where players are pushed before they authenticate. leave it same as normal lobby if you don't have an auth lobby.\n"
-        			+ "Fallback AuthLobby: AuthLobby2\n"
-        			+ "# The name of the fallback AuthLobby server in case the main AuthLobby is down.\n"
-        			+ "Ask Email: False\n"
-        			+ "# Set this to True if you want the plugin to prompt users to register their email when they login to the server for the first time.\n"
-        			+ "Session Length: \'5\'\n"
-        			+ "# How long (in minutes) does the user's session remains running after a player quits. This allows the user to log back in withing the time frame without \n"
-        			+ "# having to type their password again. If user logs in from a different IP, they will be asked to type their password again for security reasons.";
-        	
-            FileWriter fw = new FileWriter(cFile);
-			BufferedWriter out = new BufferedWriter(fw);
-            out.write(file);
-            out.close();
-            fw.close();
-        } 
-        catch (IOException e) 
-        {
-            e.printStackTrace();
+			Main.plugin.getDataFolder().mkdir();
         }
+		try
+		{
+	        if (!file.exists()) 
+	        {
+					Files.copy(Main.plugin.getResourceAsStream("messages.yml"), file.toPath());
+	        }
+		    message = cProvider.load(file);
+		}
+	    catch (IOException e) 
+	    {
+	        e.printStackTrace();
+	    }
 	}
 }
