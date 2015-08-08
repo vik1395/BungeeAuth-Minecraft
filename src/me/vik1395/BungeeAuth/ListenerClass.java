@@ -68,7 +68,7 @@ public class ListenerClass implements Listener
 			//checks if player's session is still available
 			if(currip.equals(lastip) && diffmin<=Main.seshlength)
 			{
-					pl.sendMessage(new ComponentBuilder("Welcome back " + pl.getName() + "! Your session has been resumed.").color(ChatColor.GREEN).create());
+					pl.sendMessage(new ComponentBuilder(Main.welcome_resume.replace("%player%", pl.getName())).color(ChatColor.GREEN).create());
 					ct.setStatus(pl.getName(), "online");
 					if(!Main.plonline.contains(pl.getName()))
 					{
@@ -85,7 +85,7 @@ public class ListenerClass implements Listener
 				}
 				
 				movePlayer(pl, true);
-				pl.sendMessage(new ComponentBuilder("Welcome back!, please type /login [password]").color(ChatColor.RED).create());
+				pl.sendMessage(new ComponentBuilder(Main.welcome_login).color(ChatColor.RED).create());
 			}
 		}
 		
@@ -97,7 +97,7 @@ public class ListenerClass implements Listener
 			{
 				emailCh = " [email]";
 			}
-			pl.sendMessage(new ComponentBuilder("Welcome " + pl.getName() + "! Please type /register [password]" + emailCh + " to register yourself on this server.").color(ChatColor.RED).create());
+			pl.sendMessage(new ComponentBuilder(Main.welcome_register.replace("%player%", pl.getName().replace("%email%", emailCh))).color(ChatColor.RED).create());
 			//pl.sendMessage(new ComponentBuilder("").color(ChatColor.RED).create());
 		}
 	}
@@ -112,7 +112,7 @@ public class ListenerClass implements Listener
 	  if(!Main.plonline.contains(p.getName()) && !cmd.equalsIgnoreCase("/login") && !cmd.equalsIgnoreCase("/register"))
 	  {
 		  event.setCancelled(true);
-		  p.sendMessage(new ComponentBuilder("You must login to chat or execute commands.").color(ChatColor.GRAY).create());
+		  p.sendMessage(new ComponentBuilder(Main.pre_login).color(ChatColor.GRAY).create());
 	  }
 	}
 	
@@ -146,7 +146,7 @@ public class ListenerClass implements Listener
 			}
 			else
 			{
-				pl.sendMessage(new ComponentBuilder("Error! Unable to connect to AuthLobby.").color(ChatColor.DARK_RED).create());
+				pl.sendMessage(new ComponentBuilder(Main.error_authlobby).color(ChatColor.DARK_RED).create());
 				System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
 			}
 		}
@@ -164,158 +164,9 @@ public class ListenerClass implements Listener
 			}
 			else
 			{
-				pl.sendMessage(new ComponentBuilder("Error! Unable to connect to Lobby.").color(ChatColor.DARK_RED).create());
+				pl.sendMessage(new ComponentBuilder(Main.error_lobby).color(ChatColor.DARK_RED).create());
 				System.err.println("[BungeeAuth] Lobby and Fallback Lobby not found!");
 			}
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-/*public class ListenerClass implements Listener
-{
-	Tables ct = new Tables();
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onLogin(ServerConnectEvent sce)
-	{
-		ProxiedPlayer pl = sce.getPlayer();
-		String sname = sce.getTarget().getName();
-		boolean check = ct.checkPlayerEntry(pl.getName());
-		
-		//Checks for player entry in Database
-		if(check)
-		{
-			Date lastseen = ct.getLastSeen(pl.getName());
-			String lastip = ct.getLastIP(pl.getName());
-			String currip = pl.getAddress().getHostString();
-			
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-			String sdatenow = df.format(new Date());
-			Date datenow = null;
-			try 
-			{
-				datenow = df.parse(sdatenow);
-			} 
-			catch (ParseException e) 
-			{
-				e.printStackTrace();
-			}
-			
-			long difference = datenow.getTime() - lastseen.getTime();
-			long diffmin = (difference/1000)/60;
-			
-			//checks if player's session is still available
-			if(currip.equals(lastip) && diffmin<=Main.seshlength)
-			{
-					pl.sendMessage(new ComponentBuilder("Welcome back " + pl.getName() + "! Your session has been resumed.").color(ChatColor.GREEN).create());
-					ct.setStatus(pl.getName(), "online");
-					if(!Main.plonline.contains(pl.getName()))
-					{
-						Main.plonline.add(pl.getName());
-					}
-			}
-			else
-			{
-				if(Main.plonline.contains(pl.getName()))
-				{
-					Main.plonline.remove(pl.getName());
-				}
-				ProxyServer ps = Main.plugin.getProxy();
-				
-				if(!(ps.getServerInfo(Main.authlobby)==null))
-				{
-					ServerInfo sinf = ps.getServerInfo(Main.authlobby);
-					if(!sname.equalsIgnoreCase(Main.authlobby))
-					{
-						sce.setTarget(sinf);
-					}
-				}
-				else if(!(ps.getServerInfo(Main.authlobby2)==null))
-				{
-					ServerInfo sinf = ps.getServerInfo(Main.authlobby2);
-					if(!sname.equalsIgnoreCase(Main.authlobby2))
-					{
-						sce.setTarget(sinf);
-					}
-				}
-				else
-				{
-					pl.sendMessage(new ComponentBuilder("Error! Unable to connect to AuthLobby.").color(ChatColor.DARK_RED).create());
-					System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
-				}
-				
-				pl.sendMessage(new ComponentBuilder("Welcome back!, please type /login [password]").color(ChatColor.RED).create());
-			}
-		}
-		
-		else if(!check)
-		{
-			ProxyServer ps = Main.plugin.getProxy();
-			
-			if(!(ps.getServerInfo(Main.authlobby)==null))
-			{
-				ServerInfo sinf = ps.getServerInfo(Main.authlobby);
-				if(!sname.equalsIgnoreCase(Main.authlobby))
-				{
-					sce.setTarget(sinf);
-				}
-			}
-			else if(!(ps.getServerInfo(Main.authlobby2)==null))
-			{
-				ServerInfo sinf = ps.getServerInfo(Main.authlobby2);
-				if(!sname.equalsIgnoreCase(Main.authlobby2))
-				{
-					sce.setTarget(sinf);
-				}
-			}
-			else
-			{
-				pl.sendMessage(new ComponentBuilder("Error! Unable to connect to AuthLobby.").color(ChatColor.DARK_RED).create());
-				System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
-			}
-			
-			String emailCh = "";
-			if(Main.email)
-			{
-				emailCh = " [email]";
-			}
-			pl.sendMessage(new ComponentBuilder("Welcome " + pl.getName() + "! Please type /register [password]" + emailCh + " to register yourself on this server.").color(ChatColor.RED).create());
-			//pl.sendMessage(new ComponentBuilder("").color(ChatColor.RED).create());
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onChatEvent(ChatEvent event) {
-	  ProxiedPlayer p = (ProxiedPlayer) event.getSender();
-	  String msg = event.getMessage();
-	  String arr[] = msg.split(" ");
-	  String cmd = arr[0];
-	  
-	  if(!Main.plonline.contains(p.getName()) && !cmd.equalsIgnoreCase("/login") && !cmd.equalsIgnoreCase("/register"))
-	  {
-		  event.setCancelled(true);
-		  p.sendMessage(new ComponentBuilder("You must login to chat or execute commands.").color(ChatColor.GRAY).create());
-	  }
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerQuit(PlayerDisconnectEvent pde)
-	{
-		ProxiedPlayer pl = pde.getPlayer();
-		if(Main.plonline.contains(pl.getName()))
-		{
-			Main.plonline.remove(pl.getName());
-		}
-		ct.setLastSeen(pl.getName(), pl.getAddress().getAddress().getHostAddress());
-		ct.setStatus(pl.getName(), "offline");
-	}
-}*/

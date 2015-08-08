@@ -56,7 +56,7 @@ public class Login extends Command
 					{
 						emailCh = " [email]";
 					}
-					p.sendMessage(new ComponentBuilder(Main.register + emailCh).color(ChatColor.RED).create());
+					p.sendMessage(new ComponentBuilder(Main.register.replace("%email%", emailCh)).color(ChatColor.RED).create());
 				}
 				
 				else

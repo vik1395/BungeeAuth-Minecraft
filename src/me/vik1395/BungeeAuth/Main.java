@@ -31,8 +31,9 @@ public class Main extends Plugin
 	public static int seshlength;
 	public static boolean email;
 	public static String authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
-    reg_success, already_reg, login_success, already_in, logout_success, already_out,
-    reset_noreg, reset_success, no_perm, pass_change_success, wrong_pass;
+    reg_success, already_reg, login_success, already_in, logout_success, already_out, reset_noreg, reset_success,
+    no_perm, pass_change_success, wrong_pass, welcome_resume, welcome_login, welcome_register, pre_login,
+    error_authlobby, error_lobby;
 	
 	public void onEnable()
 	{
@@ -102,5 +103,11 @@ public class Main extends Plugin
 		no_perm = YamlGenerator.message.getString("no_perm");
 		pass_change_success = YamlGenerator.message.getString("pass_change_success");
 		wrong_pass = YamlGenerator.message.getString("wrong_pass");
+		welcome_resume = YamlGenerator.message.getString("welcome_resume");
+		welcome_login = YamlGenerator.message.getString("welcome_login");
+		welcome_register = YamlGenerator.message.getString("welcome_register");
+		pre_login = YamlGenerator.message.getString("pre_login");
+	    error_authlobby = YamlGenerator.message.getString("error_authlobby");
+	    error_lobby = YamlGenerator.message.getString("error_lobby");
 	}
 }
