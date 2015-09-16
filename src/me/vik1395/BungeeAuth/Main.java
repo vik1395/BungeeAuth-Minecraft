@@ -94,7 +94,7 @@ public class Main extends Plugin
 		register = YamlGenerator.message.getString("register");
 		reg_success = YamlGenerator.message.getString("reg_success");
 		already_reg = YamlGenerator.message.getString("already_reg");
-		login_success = YamlGenerator.message.getString("register");
+		login_success = YamlGenerator.message.getString("login_success");
 		already_in = YamlGenerator.message.getString("already_in");
 		logout_success = YamlGenerator.message.getString("logout_success");
 		already_out = YamlGenerator.message.getString("already_out");
