@@ -92,6 +92,7 @@ public class Login extends Command
 							Main.plonline.add(p.getName());
 							ct.setStatus(p.getName(), "online");
 							ListenerClass.movePlayer(p, false);
+							ListenerClass.prelogin.get(p.getName()).cancel();
 							p.sendMessage(new ComponentBuilder(Main.login_success).color(ChatColor.GREEN).create());
 						}
 					}

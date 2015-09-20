@@ -4,10 +4,13 @@
 # Use "%player%" for player name. Player name only works for reset_noreg, reset_success, welcome_resume and welcome_register.
 # Use "%email%" in welcome_register and register if you have email requirement enabled.
 
+illegal_name: "Special characters are not allowed!"
+
 register: "You haven't registered yet! Please type /register [password] %email%"
 reg_success: "Registration was successful. Please type /login [password] to start playing."
 already_reg: "You have already registered! please type /login [password]"
 
+nologin_kick: "You took too long to log in!"
 login_success: "You have logged in successfully! You may now chat and use commands."
 already_in: "You are already logged in!"
 
@@ -17,6 +20,7 @@ already_out: "You have already logged out!"
 reset_noreg: "%player% has not been registered on this server."
 reset_success: "Successfully reset %player%'s password."
 no_perm: "You do not have permission to use this command!"
+reg_limit: "You have reached the maximum number of users allowed to register from the same IP"
 
 pass_change_success: "Password was changed successfully."
 

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>BungeeAuth</groupId>
   <artifactId>BungeeAuth</artifactId>
-  <version>1.2.2</version>
+  <version>1.3</version>
   <name>BungeeAuth</name>
   <description>A Player Authentication plugin for Bungee Servers</description>
   <build>

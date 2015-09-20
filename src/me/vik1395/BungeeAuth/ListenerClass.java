@@ -4,17 +4,23 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
@@ -36,6 +42,22 @@ You may find an abridged version of the License at http://creativecommons.org/li
 public class ListenerClass implements Listener
 {
 	Tables ct = new Tables();
+	public static HashMap<String, ScheduledTask> prelogin = new HashMap<>();
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPreLogin(PreLoginEvent ple)
+	{
+		if(Main.restrictun)
+		{
+			//("~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./")
+			Pattern p = Pattern.compile("[^a-zA-Z0-9]");
+			if(p.matcher(ple.getConnection().getName()).find());
+			{
+				ple.setCancelReason(ChatColor.RED + Main.illegal_name);
+				ple.setCancelled(true);
+			}
+		}
+	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onLogin(PostLoginEvent ple)
@@ -86,6 +108,7 @@ public class ListenerClass implements Listener
 				
 				movePlayer(pl, true);
 				pl.sendMessage(new ComponentBuilder(Main.welcome_login).color(ChatColor.RED).create());
+				startTask(pl);
 			}
 		}
 		
@@ -98,6 +121,7 @@ public class ListenerClass implements Listener
 				emailCh = " [email]";
 			}
 			pl.sendMessage(new ComponentBuilder(Main.welcome_register.replace("%player%", pl.getName().replace("%email%", emailCh))).color(ChatColor.RED).create());
+			startTask(pl);
 			//pl.sendMessage(new ComponentBuilder("").color(ChatColor.RED).create());
 		}
 	}
@@ -168,5 +192,19 @@ public class ListenerClass implements Listener
 				System.err.println("[BungeeAuth] Lobby and Fallback Lobby not found!");
 			}
 		}
+	}
+	
+	private void startTask(final ProxiedPlayer pl)
+	{
+
+		prelogin.put(pl.getName(), Main.plugin.getProxy().getScheduler().schedule(Main.plugin, new Runnable() {
+
+			@Override
+			public void run() 
+			{
+				pl.disconnect(new TextComponent(Main.nologin_kick));
+			}
+			
+		}, (long) Main.gseshlength, TimeUnit.SECONDS));
 	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.vik1395.BungeeAuth.Utils.YamlGenerator;
+import me.vik1395.BungeeAuthAPI.PHP.APISockets;
 import net.md_5.bungee.api.plugin.Plugin;
 
 /*
@@ -28,17 +29,18 @@ public class Main extends Plugin
 	Login ln = new Login();
 	public static List<String> plonline = new ArrayList<String>();
 	public static Plugin plugin;
-	public static int seshlength;
-	public static boolean email;
-	public static String authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
+	public static int seshlength, phpport, gseshlength, entperip;
+	public static boolean email, phpapi, restrictun;
+	public static String version, authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
     reg_success, already_reg, login_success, already_in, logout_success, already_out, reset_noreg, reset_success,
     no_perm, pass_change_success, wrong_pass, welcome_resume, welcome_login, welcome_register, pre_login,
-    error_authlobby, error_lobby;
+    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick;
 	
 	public void onEnable()
 	{
         getProxy().getPluginManager().registerListener(this, new ListenerClass());
 		plugin = this;
+		version = this.getDescription().getVersion();
 		
 		YamlGenerator yg = new YamlGenerator();
 		yg.saveDefaultConfig();
@@ -61,6 +63,14 @@ public class Main extends Plugin
 		getProxy().getPluginManager().registerCommand(this, new ResetPlayer());
 		getProxy().getPluginManager().registerCommand(this, new Logout());
 		
+		if(phpapi)
+		{
+			getLogger().info("Enabling PHP API...");
+			
+			APISockets sockets = new APISockets();
+			sockets.enable(phpport);
+		}
+		
 		getLogger().info("BungeeAuth has successfully started!");
 		getLogger().info("Created by Vik1395");
 		
@@ -68,6 +78,7 @@ public class Main extends Plugin
 	
 	public void onDisable()
 	{
+		APISockets.disable();
 		if(plonline.size()>0)
 		{
 			for(int i=0; i<plonline.size();i++)
@@ -90,10 +101,19 @@ public class Main extends Plugin
 	    authlobby2 = YamlGenerator.config.getString("Fallback AuthLobby");
 	    email  = YamlGenerator.config.getBoolean("Ask Email");
 	    seshlength = YamlGenerator.config.getInt("Session Length");
-	    
+	    gseshlength = YamlGenerator.config.getInt("Guest Session Length");
+	    restrictun = YamlGenerator.config.getBoolean("Restrict Usernames");
+	    entperip = YamlGenerator.config.getInt("Users per IP"); 
+	    phpapi = YamlGenerator.config.getBoolean("Enable PHP API");
+	    phpport = YamlGenerator.config.getInt("PHP API Port");
+	    phppass = YamlGenerator.config.getString("API Password");
+
+		illegal_name = YamlGenerator.config.getString("illegal_name");
 		register = YamlGenerator.message.getString("register");
 		reg_success = YamlGenerator.message.getString("reg_success");
 		already_reg = YamlGenerator.message.getString("already_reg");
+	    reg_limit = YamlGenerator.message.getString("reg_limit_reached");
+	    nologin_kick = YamlGenerator.message.getString("nologin_kick");
 		login_success = YamlGenerator.message.getString("login_success");
 		already_in = YamlGenerator.message.getString("already_in");
 		logout_success = YamlGenerator.message.getString("logout_success");

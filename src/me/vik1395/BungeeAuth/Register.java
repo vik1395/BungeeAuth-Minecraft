@@ -57,8 +57,15 @@ public class Register extends Command
 			
 			else
 			{
+				String regip = p.getAddress().getAddress().getHostAddress();
 				String email = "";
 				boolean ch = true;
+				
+				if(t.registerLimit(regip))
+				{
+					p.sendMessage(new ComponentBuilder(Main.reg_limit).color(ChatColor.RED).create());
+				}
+				
 				try
 				{
 					//checks if email is required in the config. player@localhost is used as a placeholder
@@ -99,7 +106,6 @@ public class Register extends Command
 					
 					String Pw = args[0];
 					String pType = "" + rand.nextInt(maxp+1);
-					String regip = p.getAddress().getAddress().getHostAddress();
 					String regdate = ft.format(dNow);
 					String lastip = regip;
 					String lastseen = regdate;
@@ -109,7 +115,9 @@ public class Register extends Command
 					try 
 					{
 						t.newPlayerEntry(pName, hash, pType, email, regip, regdate, lastip, lastseen);
+						ListenerClass.prelogin.get(p.getName()).cancel();
 						p.sendMessage(new ComponentBuilder(Main.reg_success).color(ChatColor.GOLD).create());
+						
 					} 
 					catch (SQLException e) 
 					{

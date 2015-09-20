@@ -25,9 +25,27 @@ AuthLobby: AuthLobby
 Fallback AuthLobby: AuthLobby2
 # The name of the fallback AuthLobby server in case the main AuthLobby is down.
 
-Ask Email: False
+Ask Email: false
 # Set this to True if you want the plugin to prompt users to register their email when they login to the server for the first time.
 
-Session Length: '5'
+Session Length: 5
 # How long (in minutes) does the user's session remains running after a player quits. This allows the user to log back in within the time frame without
 # having to type their password again. If user logs in from a different IP, they will be asked to type their password again for security reasons.
+
+Guest Session Length: 60
+# How long (in seconds) the user has before they have to register or login.
+
+Restrict Usernames: true
+# Restrict usage of special characters in usernames.
+
+Users per IP: 5
+# Number of users that can register (not login) from the same IP
+
+Enable PHP API: false
+# Enabling this will make the plugin listen to API requests from a port.
+
+PHP API Port: 1395
+# The port that the plugin will be listening for API requests on.
+
+API Password: 'pZe8qNCC6s5NKvYj'
+# The password required in the API requests for a response.

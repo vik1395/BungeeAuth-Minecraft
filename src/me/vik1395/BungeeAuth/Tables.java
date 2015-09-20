@@ -29,7 +29,7 @@ You may find an abridged version of the License at http://creativecommons.org/li
 
 public class Tables 
 {
-	public void Create() throws SQLException
+	protected void Create() throws SQLException
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -43,7 +43,7 @@ public class Tables
 					+ "`email` VARCHAR(255) NOT NULL DEFAULT 'player@localhost', `registeredip` VARCHAR(30) NOT NULL, `registerdate` DATE NOT NULL DEFAULT '0001-01-01', `lastip` VARCHAR(30) NOT NULL, `lastseen` DATETIME NOT NULL DEFAULT '0001-01-01 01:01:01', "
 					+ "`version` VARCHAR(10) NOT NULL, `status` VARCHAR(10) NOT NULL, PRIMARY KEY (`id`));");
 			statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
-					+ "'6','player@localhost','1.1.1.1','1.1.1.1','1.0.1','ver'" +");");
+					+ "'6','player@localhost','1.1.1.1','1.1.1.1','" + Main.version + "','ver'" +");");
 		}
 		else
 		{
@@ -68,7 +68,7 @@ public class Tables
 		MySQL.closeConnection();
 	}
 	
-	public void Update() throws SQLException
+	protected void Update() throws SQLException
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -87,12 +87,12 @@ public class Tables
 			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `lastseen` DATETIME NOT NULL DEFAULT '0001-01-01 01:01:01'");
 			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `version` VARCHAR(10) NOT NULL");
 			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `status` VARCHAR(10) NOT NULL");
-			statement.executeUpdate("UPDATE `BungeeAuth` SET `version` = '1.0.1'");
+			statement.executeUpdate("UPDATE `BungeeAuth` SET `version` = '" + Main.version + "'");
 			statement.executeUpdate("UPDATE `BungeeAuth` SET `registerdate` = '0001-01-01'");
 			statement.executeUpdate("UPDATE `BungeeAuth` SET `lastseen` = '0001-01-01 01:01:01'");
 			statement.executeUpdate("UPDATE `BungeeAuth` SET `email` = 'player@localhost'");
 			statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
-					+ "'6','player@localhost','1.1.1.1','1.1.1.1','1.0.1','ver'" +");");
+					+ "'6','player@localhost','1.1.1.1','1.1.1.1','" + Main.version + "','ver'" +");");
 		}
 		
 		statement.close();
@@ -100,7 +100,7 @@ public class Tables
 		MySQL.closeConnection();
 	}
 	
-	public void Update2() throws SQLException
+	protected void Update2() throws SQLException
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -116,9 +116,9 @@ public class Tables
 			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `lastseen` DATETIME NOT NULL DEFAULT '0001-01-01 01:01:01' AFTER `lastip`");
 			//statement.executeUpdate("UPDATE `BungeeAuth` SET `registerdate` = '0001-01-01'");
 			//statement.executeUpdate("UPDATE `BungeeAuth` SET `lastseen` = '0001-01-01 01:01:01'");
-			statement.executeUpdate("UPDATE `BungeeAuth` SET `version` = '1.0.1'");
+			statement.executeUpdate("UPDATE `BungeeAuth` SET `version` = '" + Main.version + "'");
 			statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
-					+ "'6','player@localhost','1.1.1.1','1.1.1.1','1.0.1','ver'" +");");
+					+ "'6','player@localhost','1.1.1.1','1.1.1.1','" + Main.version + "','ver'" +");");
 		}
 		
 		statement.close();
@@ -160,7 +160,7 @@ public class Tables
 		return check;
 	}
 	
-	public void newPlayerEntry(String player, String phash, String ptype, String email, String regip, String regdate, String lastip, String lastseen) throws SQLException
+	protected void newPlayerEntry(String player, String phash, String ptype, String email, String regip, String regdate, String lastip, String lastseen) throws SQLException
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -172,7 +172,7 @@ public class Tables
 		MySQL.closeConnection();
 	}
 	
-	public void removePlayerEntry(String playername)
+	protected void removePlayerEntry(String playername)
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -265,7 +265,7 @@ public class Tables
 		return pwType;
 	}
 	
-	public void updatePassword(String playername, String newPw, String pwType)
+	protected void updatePassword(String playername, String newPw, String pwType)
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -334,6 +334,92 @@ public class Tables
 		return lastseendate;
 	}
 	
+	public Date getRegisterDate(String playername)
+	{
+		boolean check = false;
+		String regdate = "";
+		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
+		Connection c = null;
+		c = MySQL.openConnection();
+		try
+		{
+			Statement statement = c.createStatement();
+			ResultSet pcheck = statement.executeQuery("SELECT * FROM BungeeAuth WHERE playername = '" + playername.toLowerCase() + "';");
+			if(!pcheck.next())
+			{
+				check=false;
+			}
+			else
+			{
+				regdate = pcheck.getString("registerdate");
+				check=true;
+			}
+			if(!check)
+			{
+				regdate = "";
+			}
+			
+			statement.close();
+			c.close();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+		Date registerdate = null;
+		try 
+		{
+			registerdate = df.parse(regdate);
+		} 
+		catch (ParseException e) 
+		{
+			e.printStackTrace();
+			System.err.println("[BungeeAuth] Unable to parse last seen data from MySQL database for " + playername);
+		}
+		
+		MySQL.closeConnection();
+		return registerdate;
+	}
+	
+	public String getEmail(String playername)
+	{
+		boolean check = false;
+		String email = "";
+		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
+		Connection c = null;
+		c = MySQL.openConnection();
+		try
+		{
+			Statement statement = c.createStatement();
+			ResultSet pcheck = statement.executeQuery("SELECT * FROM BungeeAuth WHERE playername = '" + playername.toLowerCase() + "';");
+			if(!pcheck.next())
+			{
+				check=false;
+			}
+			else
+			{
+				email = pcheck.getString("email");
+				check=true;
+			}
+			if(!check)
+			{
+				email = "";
+			}
+			
+			statement.close();
+			c.close();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		MySQL.closeConnection();
+		return email;
+	}
+	
 	public String getLastIP(String playername)
 	{
 		boolean check = false;
@@ -369,6 +455,43 @@ public class Tables
 		
 		MySQL.closeConnection();
 		return lastip;
+	}
+	
+	public String getRegisteredIP(String playername)
+	{
+		boolean check = false;
+		String regip = "";
+		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
+		Connection c = null;
+		c = MySQL.openConnection();
+		try
+		{
+			Statement statement = c.createStatement();
+			ResultSet pcheck = statement.executeQuery("SELECT * FROM BungeeAuth WHERE playername = '" + playername.toLowerCase() + "';");
+			if(!pcheck.next())
+			{
+				check=false;
+			}
+			else
+			{
+				regip = pcheck.getString("registeredip");
+				check=true;
+			}
+			if(!check)
+			{
+				regip = "";
+			}
+			
+			statement.close();
+			c.close();
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		MySQL.closeConnection();
+		return regip;
 	}
 	
 	public String getStatus(String playername)
@@ -407,7 +530,7 @@ public class Tables
 		MySQL.closeConnection();
 		return status;
 	}
-	public void setStatus(String playername, String status)
+	protected void setStatus(String playername, String status)
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -427,7 +550,7 @@ public class Tables
 		
 		MySQL.closeConnection();
 	}
-	public void setLastSeen(String playername, String ip, String date)
+	protected void setLastSeen(String playername, String ip, String date)
 	{
 		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
 		Connection c = null;
@@ -459,5 +582,42 @@ public class Tables
 		}
 		
 		MySQL.closeConnection();
+	}
+	
+	public boolean registerLimit(String ip)
+	{
+		int entries = 0;
+		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
+		Connection c = null;
+		c = MySQL.openConnection();
+		try
+		{
+			Statement statement = c.createStatement();
+			ResultSet pcheck = statement.executeQuery("SELECT * AS entries FROM BungeeAuth WHERE registeredip = '" + ip + "';");
+			if(pcheck.next())
+			{
+				entries = pcheck.getInt("entries");
+			}
+			statement.close();
+			c.close();
+			
+			if(entries<Main.entperip)
+			{
+				return true;
+			}
+			
+			else
+			{
+				return false;
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		MySQL.closeConnection();
+		
+		return true;
 	}
 }
