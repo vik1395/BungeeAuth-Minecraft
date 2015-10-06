@@ -9,9 +9,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Locale;
 
 import me.vik1395.BungeeAuth.Main;
+import me.vik1395.BungeeAuth.Utils.Blacklist;
 import me.vik1395.BungeeAuthAPI.RequestHandler;
 
 /*
@@ -37,6 +39,8 @@ You may find an abridged version of the License at http://creativecommons.org/li
 public class APISockets 
 {
 	private static boolean run = false;
+	private static HashMap<String, Integer> iplist = new HashMap<>();
+	Blacklist file;
 	
 	public static void disable()
 	{
@@ -46,6 +50,10 @@ public class APISockets
 	
 	public void enable(final int port)
 	{
+		file = new Blacklist();
+		file.create();
+		iplist = file.readAll();
+		
 		Main.plugin.getProxy().getScheduler().runAsync(Main.plugin, new Runnable() {
 			@Override
 			public void run()
@@ -62,16 +70,54 @@ public class APISockets
 					while (run) 
 					{
 						sock = listenSock.accept();
+						String addr = sock.getInetAddress().getHostAddress();
 						
 						BufferedReader reader =	new BufferedReader(new InputStreamReader(sock.getInputStream()));
 						BufferedWriter writer =	new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+						int err = 0;
+						boolean blocked = false;
+						System.out.println("");
+						if(iplist.containsKey(addr))
+						{
+							err = iplist.get(addr);
+							if(err>=Main.errlim)
+							{
+								blocked = true;
+							}
+						}
 						String response = "";
 						String pass = reader.readLine();
-						if(pass.equals(Main.phppass))
+						System.out.println(pass);
+						
+						if(blocked)
 						{
-							String test = reader.readLine();
-							response = ProcessRequest(test);
-							writer.write(response + "\n");
+							writer.write("Your IP has been blocked due to too many incorrect attempts!\n");
+						}
+						else
+						{
+							if(pass.equals(Main.phppass))
+							{
+								String test = reader.readLine();
+								System.out.println(test);
+								response = ProcessRequest(test, addr);
+								writer.write(response + "\n");
+							}
+							else
+							{
+								int errors = 1;
+								if(iplist!=null && iplist.containsKey(addr))
+								{
+									errors = iplist.get(addr)+1;
+									iplist.put(addr, errors);
+									file.write(addr, errors);
+								}
+								else
+								{
+									iplist.put(addr, errors);
+									file.write(addr, errors);
+								}
+								writer.write("Wrong API Password! Your IP will be blocked after " + (Main.errlim-errors) + " more incorrect attempts\n");
+							}
 						}
 						writer.close();
 						reader.close();
@@ -87,7 +133,7 @@ public class APISockets
 		});
 	}
 	
-	private String ProcessRequest(String strreq)
+	private String ProcessRequest(String strreq, String addr)
 	{
 		RequestHandler rh = new RequestHandler();
 		String[]rawreq = strreq.split(":");

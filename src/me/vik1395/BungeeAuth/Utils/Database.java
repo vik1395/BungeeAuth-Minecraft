@@ -1,6 +1,7 @@
 package me.vik1395.BungeeAuth.Utils;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 
 /*
 
@@ -64,4 +65,19 @@ public abstract class Database {
      * Closes the connection with the database
      */
     public abstract void closeConnection();
+    
+    /**
+     * Query the SQL database
+     * 
+     * @param query
+     * @return Connection with the database, null if none
+     */
+    public abstract ResultSet querySQL(String query);
+    
+    /**
+     * Update the SQL database
+     * 
+     * @param update
+     */
+    public abstract void updateSQL(String update);
 }

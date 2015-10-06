@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import me.vik1395.BungeeAuth.Main;
 import me.vik1395.BungeeAuth.Utils.Database;
 
 /*
@@ -66,13 +67,13 @@ public class MySQL extends Database {
     public Connection openConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database;
+            String db = "jdbc:mysql://" + hostname + ":" + port + "/" + database;
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            connection = DriverManager.getConnection(url,user,password);
+            connection = DriverManager.getConnection(db,user,password);
         } catch (SQLException | InstantiationException | IllegalAccessException e) {
-            System.out.println("Could not connect to MySQL server! because: " + e.getMessage());
+        	Main.plugin.getLogger().severe("Could not connect to MySQL database! Because: " + e.getMessage());
         } catch (ClassNotFoundException e) {
-            System.out.println("JDBC Driver not found!");
+        	Main.plugin.getLogger().severe("JDBC Driver not found!");
             e.printStackTrace();
         }
         return connection;
@@ -94,12 +95,13 @@ public class MySQL extends Database {
             try {
                 connection.close();
             } catch (SQLException e) {
-            	System.out.println("Error closing the MySQL Connection!");
+            	Main.plugin.getLogger().severe("Error closing the MySQL Connection!");
                 e.printStackTrace();
             }
         }
     }
 
+    @Override
     public ResultSet querySQL(String query) {
         Connection c = null;
 
@@ -130,6 +132,7 @@ public class MySQL extends Database {
         return ret;
     }
 
+    @Override
     public void updateSQL(String update) {
 
         Connection c = null;

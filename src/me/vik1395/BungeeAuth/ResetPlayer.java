@@ -74,7 +74,7 @@ public class ResetPlayer extends Command
 						}
 						catch(Exception e)
 						{
-							
+							e.printStackTrace();
 						}
 					}
 				}
@@ -105,7 +105,7 @@ public class ResetPlayer extends Command
 						}
 						catch(Exception e)
 						{
-							
+							e.printStackTrace();
 						}
 					}
 				}

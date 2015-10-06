@@ -25,20 +25,18 @@ You may find an abridged version of the License at http://creativecommons.org/li
 
 public class Main extends Plugin
 {
-	Tables ct = new Tables();
-	Login ln = new Login();
+	Tables ct;
 	public static List<String> plonline = new ArrayList<String>();
 	public static Plugin plugin;
-	public static int seshlength, phpport, gseshlength, entperip;
-	public static boolean email, phpapi, restrictun;
+	public static int seshlength, phpport, gseshlength, entperip, errlim;
+	public static boolean email, phpapi;
 	public static String version, authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
     reg_success, already_reg, login_success, already_in, logout_success, already_out, reset_noreg, reset_success,
     no_perm, pass_change_success, wrong_pass, welcome_resume, welcome_login, welcome_register, pre_login,
-    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick;
+    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick, allowedun;
 	
 	public void onEnable()
 	{
-        getProxy().getPluginManager().registerListener(this, new ListenerClass());
 		plugin = this;
 		version = this.getDescription().getVersion();
 		
@@ -47,13 +45,16 @@ public class Main extends Plugin
 		yg.saveDefaultMessage();
 		loadYaml();
 		
+        getProxy().getPluginManager().registerListener(this, new ListenerClass());
+		ct = new Tables();
+		
 		try 
 		{
 			ct.Create();
 		}
 		catch (SQLException e) 
 		{
-			getLogger().info("There was an error while creating MySQL Tables.");
+			getLogger().info("Unable to create MySQL table! Please make sure login details are correct and the SQL server accepts connections!");
 			e.printStackTrace();
 		}
 		
@@ -91,7 +92,7 @@ public class Main extends Plugin
 	public static void loadYaml()
 	{
 		host = YamlGenerator.config.getString("Host");
-	    port = YamlGenerator.config.getString("Port");
+	    port = "" + YamlGenerator.config.getInt("Port");
 	    dbName = YamlGenerator.config.getString("DBName");
 	    username = YamlGenerator.config.getString("Username");
 	    pass = YamlGenerator.config.getString("Password");
@@ -102,17 +103,18 @@ public class Main extends Plugin
 	    email  = YamlGenerator.config.getBoolean("Ask Email");
 	    seshlength = YamlGenerator.config.getInt("Session Length");
 	    gseshlength = YamlGenerator.config.getInt("Guest Session Length");
-	    restrictun = YamlGenerator.config.getBoolean("Restrict Usernames");
+	    allowedun = YamlGenerator.config.getString("Legal Usernames Characters");
 	    entperip = YamlGenerator.config.getInt("Users per IP"); 
 	    phpapi = YamlGenerator.config.getBoolean("Enable PHP API");
 	    phpport = YamlGenerator.config.getInt("PHP API Port");
 	    phppass = YamlGenerator.config.getString("API Password");
+	    errlim = YamlGenerator.config.getInt("API Error Limit");
 
 		illegal_name = YamlGenerator.config.getString("illegal_name");
 		register = YamlGenerator.message.getString("register");
 		reg_success = YamlGenerator.message.getString("reg_success");
 		already_reg = YamlGenerator.message.getString("already_reg");
-	    reg_limit = YamlGenerator.message.getString("reg_limit_reached");
+	    reg_limit = YamlGenerator.message.getString("reg_limit");
 	    nologin_kick = YamlGenerator.message.getString("nologin_kick");
 		login_success = YamlGenerator.message.getString("login_success");
 		already_in = YamlGenerator.message.getString("already_in");

@@ -61,9 +61,10 @@ public class Register extends Command
 				String email = "";
 				boolean ch = true;
 				
-				if(t.registerLimit(regip))
+				if(t.reachedLimit(regip))
 				{
 					p.sendMessage(new ComponentBuilder(Main.reg_limit).color(ChatColor.RED).create());
+					return;
 				}
 				
 				try
@@ -121,7 +122,7 @@ public class Register extends Command
 					} 
 					catch (SQLException e) 
 					{
-						System.err.println("[BungeeAuth] Error when creating a new player in the MySQL Database");
+						Main.plugin.getLogger().severe("[BungeeAuth] Error when creating a new player in the MySQL Database");
 						e.printStackTrace();
 					}
 				}

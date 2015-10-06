@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -47,15 +46,10 @@ public class ListenerClass implements Listener
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPreLogin(PreLoginEvent ple)
 	{
-		if(Main.restrictun)
+		if(!ple.getConnection().getName().matches(Main.allowedun))
 		{
-			//("~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./")
-			Pattern p = Pattern.compile("[^a-zA-Z0-9]");
-			if(p.matcher(ple.getConnection().getName()).find());
-			{
-				ple.setCancelReason(ChatColor.RED + Main.illegal_name);
-				ple.setCancelled(true);
-			}
+			ple.setCancelReason(ChatColor.RED + Main.illegal_name);
+			ple.setCancelled(true);
 		}
 	}
 	
@@ -65,8 +59,21 @@ public class ListenerClass implements Listener
 		ProxiedPlayer pl = ple.getPlayer();
 		boolean check = ct.checkPlayerEntry(pl.getName());
 		
+		if(!check)
+		{
+			movePlayer(pl, true);
+			String emailCh = "";
+			if(Main.email)
+			{
+				emailCh = " [email]";
+			}
+			pl.sendMessage(new ComponentBuilder(Main.welcome_register.replace("%player%", pl.getName()).replace("%email%", emailCh)).color(ChatColor.RED).create());
+			startTask(pl);
+			//pl.sendMessage(new ComponentBuilder("").color(ChatColor.RED).create());
+		}
+		
 		//Checks for player entry in Database
-		if(check)
+		else if(check)
 		{
 			Date lastseen = ct.getLastSeen(pl.getName());
 			String lastip = ct.getLastIP(pl.getName());
@@ -110,19 +117,6 @@ public class ListenerClass implements Listener
 				pl.sendMessage(new ComponentBuilder(Main.welcome_login).color(ChatColor.RED).create());
 				startTask(pl);
 			}
-		}
-		
-		else if(!check)
-		{
-			movePlayer(pl, true);
-			String emailCh = "";
-			if(Main.email)
-			{
-				emailCh = " [email]";
-			}
-			pl.sendMessage(new ComponentBuilder(Main.welcome_register.replace("%player%", pl.getName().replace("%email%", emailCh))).color(ChatColor.RED).create());
-			startTask(pl);
-			//pl.sendMessage(new ComponentBuilder("").color(ChatColor.RED).create());
 		}
 	}
 	

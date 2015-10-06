@@ -1,14 +1,16 @@
+# BungeeAuth Config File
+
 Host: 127.0.0.1
 # Please enter the Host of your MySQL Database here.
 
-Port: '3306'
+Port: 3306
 # Please enter the port where your MySQL Database is hosted.
 
 Username: root
 # The Username which should be used to auth against the Database.
 
 Password: 'pass'
-# The Password which should be used to auth against the Database. If you don't have a password, please leave two quotation marks (') in this field.
+# The Password which should be used to auth against the Database. If you don't have a password, please leave two single quotation marks (') in this field.
 
 DBName: Bungee
 #The name of the database where BungeeAuth's Tables shall be created.
@@ -35,11 +37,13 @@ Session Length: 5
 Guest Session Length: 60
 # How long (in seconds) the user has before they have to register or login.
 
-Restrict Usernames: true
-# Restrict usage of special characters in usernames.
+Legal Usernames Characters: "[a-zA-Z0-9_]*"
+# Allowed Characters in Usernames (). Enclose in quotation marks.
 
 Users per IP: 5
-# Number of users that can register (not login) from the same IP
+# Number of users that can register (not login) from the same IP.
+
+#---------------------------- PHP API AREA ----------------------------#
 
 Enable PHP API: false
 # Enabling this will make the plugin listen to API requests from a port.
@@ -48,4 +52,7 @@ PHP API Port: 1395
 # The port that the plugin will be listening for API requests on.
 
 API Password: 'pZe8qNCC6s5NKvYj'
-# The password required in the API requests for a response.
+# The password required in the API requests for a response. If you don't have a password, please leave two single quotation marks (') in this field.
+
+API Error Limit: 5
+# Set the maximum number of wrong api password attempts used by a php script before it's ip gets blocked. IP will be blocked until removed from apithreats.yml

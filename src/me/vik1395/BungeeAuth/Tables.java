@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import me.vik1395.BungeeAuth.Utils.Database;
 import me.vik1395.BungeeAuth.Utils.MySQL;
 
 /*
@@ -29,11 +30,16 @@ You may find an abridged version of the License at http://creativecommons.org/li
 
 public class Tables 
 {
+	Database db;
+	
+	public Tables()
+	{
+		db = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
+	}
+	
 	protected void Create() throws SQLException
 	{
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		Statement statement = c.createStatement();
 		
 		ResultSet bacheck = statement.executeQuery("SHOW TABLES LIKE 'BungeeAuth';");
@@ -65,14 +71,12 @@ public class Tables
 		
 		statement.close();
 		c.close();
-		MySQL.closeConnection();
+		db.closeConnection();
 	}
 	
 	protected void Update() throws SQLException
 	{
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		Statement statement = c.createStatement();
 		
 		ResultSet bacheck = statement.executeQuery("SHOW TABLES LIKE 'BungeeAuth';");
@@ -97,14 +101,12 @@ public class Tables
 		
 		statement.close();
 		c.close();
-		MySQL.closeConnection();
+		db.closeConnection();
 	}
 	
 	protected void Update2() throws SQLException
 	{
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		Statement statement = c.createStatement();
 		
 		ResultSet bacheck = statement.executeQuery("SHOW TABLES LIKE 'BungeeAuth';");
@@ -123,16 +125,13 @@ public class Tables
 		
 		statement.close();
 		c.close();
-		MySQL.closeConnection();
 	}
 	
 	
 	public boolean checkPlayerEntry(String playername)
 	{
 		boolean check = false;
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		Statement statement;
 		try {
 			statement = c.createStatement();
@@ -150,33 +149,28 @@ public class Tables
 		statement.close();
 		c.close();
 		
-		} catch (SQLException e) {
+		} catch (SQLException e) 
+		{
+			Main.plugin.getLogger().severe("[BungeeAuth] There is a problem with the connection to the MySQL Database!");
 			e.printStackTrace();
-			System.err.println("[BungeeAuth] There is a problem with the connection to the MySQL Database!");
 		}
 		
-		MySQL.closeConnection();
 		
 		return check;
 	}
 	
 	protected void newPlayerEntry(String player, String phash, String ptype, String email, String regip, String regdate, String lastip, String lastseen) throws SQLException
 	{
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		Statement statement = c.createStatement();
 		statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `registerdate`, `lastip`, `lastseen`, `version`, `status`) VALUES ('" + player.toLowerCase() + "','" + phash + "','" + ptype +  "','" + email + "','" + regip + "','" + regdate + "','" + lastip + "','" + lastseen + "','1.0','logout'" +");");
 		statement.close();
 		c.close();
-		MySQL.closeConnection();
 	}
 	
 	protected void removePlayerEntry(String playername)
 	{
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -188,16 +182,13 @@ public class Tables
 		{
 			e.printStackTrace();
 		}
-		MySQL.closeConnection();
 	}
 	
 	public String getPassword(String playername)
 	{
 		boolean check = false;
 		String hashedPW = "";
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -224,7 +215,6 @@ public class Tables
 			e.printStackTrace();
 		}
 		
-		MySQL.closeConnection();
 		return hashedPW;
 	}
 	
@@ -232,9 +222,7 @@ public class Tables
 	{
 		boolean check = false;
 		String pwType = "";
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -261,15 +249,12 @@ public class Tables
 			e.printStackTrace();
 		}
 		
-		MySQL.closeConnection();
 		return pwType;
 	}
 	
 	protected void updatePassword(String playername, String newPw, String pwType)
 	{
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -281,17 +266,13 @@ public class Tables
 		{
 			e.printStackTrace();
 		}
-		
-		MySQL.closeConnection();
 	}
 	
 	public Date getLastSeen(String playername)
 	{
 		boolean check = false;
 		String lastseen = "";
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -327,10 +308,8 @@ public class Tables
 		catch (ParseException e) 
 		{
 			e.printStackTrace();
-			System.err.println("[BungeeAuth] Unable to parse last seen data from MySQL database for " + playername);
+			Main.plugin.getLogger().severe("[BungeeAuth] Unable to parse last seen data from MySQL database for " + playername);
 		}
-		
-		MySQL.closeConnection();
 		return lastseendate;
 	}
 	
@@ -338,9 +317,7 @@ public class Tables
 	{
 		boolean check = false;
 		String regdate = "";
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -376,10 +353,8 @@ public class Tables
 		catch (ParseException e) 
 		{
 			e.printStackTrace();
-			System.err.println("[BungeeAuth] Unable to parse last seen data from MySQL database for " + playername);
+			Main.plugin.getLogger().severe("[BungeeAuth] Unable to parse last seen data from MySQL database for " + playername);
 		}
-		
-		MySQL.closeConnection();
 		return registerdate;
 	}
 	
@@ -387,9 +362,7 @@ public class Tables
 	{
 		boolean check = false;
 		String email = "";
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -415,8 +388,6 @@ public class Tables
 		{
 			e.printStackTrace();
 		}
-		
-		MySQL.closeConnection();
 		return email;
 	}
 	
@@ -424,9 +395,7 @@ public class Tables
 	{
 		boolean check = false;
 		String lastip = "";
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -453,7 +422,6 @@ public class Tables
 			e.printStackTrace();
 		}
 		
-		MySQL.closeConnection();
 		return lastip;
 	}
 	
@@ -461,9 +429,7 @@ public class Tables
 	{
 		boolean check = false;
 		String regip = "";
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -490,7 +456,6 @@ public class Tables
 			e.printStackTrace();
 		}
 		
-		MySQL.closeConnection();
 		return regip;
 	}
 	
@@ -498,9 +463,7 @@ public class Tables
 	{
 		boolean check = false;
 		String status = "";
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -527,14 +490,11 @@ public class Tables
 			e.printStackTrace();
 		}
 		
-		MySQL.closeConnection();
 		return status;
 	}
 	protected void setStatus(String playername, String status)
 	{
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
@@ -548,13 +508,10 @@ public class Tables
 			e.printStackTrace();
 		}
 		
-		MySQL.closeConnection();
 	}
 	protected void setLastSeen(String playername, String ip, String date)
 	{
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		
 		if(date==null)
 		{
@@ -580,28 +537,24 @@ public class Tables
 		{
 			e.printStackTrace();
 		}
-		
-		MySQL.closeConnection();
 	}
 	
-	public boolean registerLimit(String ip)
+	public boolean reachedLimit(String ip)
 	{
 		int entries = 0;
-		MySQL MySQL = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
-		Connection c = null;
-		c = MySQL.openConnection();
+		Connection c = db.openConnection();
 		try
 		{
 			Statement statement = c.createStatement();
-			ResultSet pcheck = statement.executeQuery("SELECT * AS entries FROM BungeeAuth WHERE registeredip = '" + ip + "';");
+			ResultSet pcheck = statement.executeQuery("SELECT COUNT(*) FROM BungeeAuth WHERE registeredip = '" + ip + "';");
 			if(pcheck.next())
 			{
-				entries = pcheck.getInt("entries");
+				entries = pcheck.getInt(1);
 			}
 			statement.close();
 			c.close();
 			
-			if(entries<Main.entperip)
+			if(entries>=Main.entperip)
 			{
 				return true;
 			}
@@ -616,8 +569,6 @@ public class Tables
 			e.printStackTrace();
 		}
 		
-		MySQL.closeConnection();
-		
-		return true;
+		return false;
 	}
 }
