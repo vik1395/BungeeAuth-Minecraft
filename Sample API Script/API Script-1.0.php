@@ -64,7 +64,7 @@ $sock = socket_create(AF_INET, SOCK_STREAM, 0) //Creates a new Socket
 $succ = socket_connect($sock, $HOST, $PORT) //Connects to API Socket
 		or die("Error! Could not establish a connection to the host!\n");
 
-socket_write($sock, $PASS . "\n" . $REQUEST . "\n", strlen($request) + 1) //Writes to API Socket
+socket_write($sock, $PASS . "\n" . $REQUEST . "\n", strlen($PASS.$REQUEST) + 2) //Writes to API Socket
 		or die("Error! Failed to write to socket!\n");
 
 $reply = socket_read($sock, 10000, PHP_NORMAL_READ) //Stores the reply from the server.
