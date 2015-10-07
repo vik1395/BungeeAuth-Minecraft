@@ -45,7 +45,6 @@ public class Main extends Plugin
 		yg.saveDefaultMessage();
 		loadYaml();
 		
-        getProxy().getPluginManager().registerListener(this, new ListenerClass());
 		ct = new Tables();
 		
 		try 
@@ -57,7 +56,8 @@ public class Main extends Plugin
 			getLogger().info("Unable to create MySQL table! Please make sure login details are correct and the SQL server accepts connections!");
 			e.printStackTrace();
 		}
-		
+
+        getProxy().getPluginManager().registerListener(this, new ListenerClass());
 		getProxy().getPluginManager().registerCommand(this, new Register());
 		getProxy().getPluginManager().registerCommand(this, new Login());
 		getProxy().getPluginManager().registerCommand(this, new ChangePassword());
