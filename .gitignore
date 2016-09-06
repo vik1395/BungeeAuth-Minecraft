@@ -1,12 +1,3 @@
-/target/
-/target/
-/target/
-/target/
-/target/
-/target/
-/target/
-/target/
-/target/
-/target/
-/target/
-/target/
+/target/classes/
+/target/maven-archiver/
+/target/maven-status/
