@@ -29,7 +29,7 @@ public class Main extends Plugin
 	public static List<String> plonline = new ArrayList<String>();
 	public static Plugin plugin;
 	public static int seshlength, phpport, gseshlength, entperip, errlim;
-	public static boolean email, phpapi;
+	public static boolean sqlite, email, phpapi;
 	public static String version, authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
     reg_success, already_reg, login_success, already_in, logout_success, already_out, reset_noreg, reset_success,
     no_perm, pass_change_success, wrong_pass, welcome_resume, welcome_login, welcome_register, pre_login,
@@ -91,6 +91,8 @@ public class Main extends Plugin
 	
 	public static void loadYaml()
 	{
+
+	    sqlite = YamlGenerator.config.getBoolean("Use SQLite");
 		host = YamlGenerator.config.getString("Host");
 	    port = "" + YamlGenerator.config.getInt("Port");
 	    dbName = YamlGenerator.config.getString("DBName");
@@ -100,7 +102,7 @@ public class Main extends Plugin
 	    lobby2 = YamlGenerator.config.getString("Fallback Lobby");
 	    authlobby = YamlGenerator.config.getString("AuthLobby");
 	    authlobby2 = YamlGenerator.config.getString("Fallback AuthLobby");
-	    email  = YamlGenerator.config.getBoolean("Ask Email");
+	    email = YamlGenerator.config.getBoolean("Ask Email");
 	    seshlength = YamlGenerator.config.getInt("Session Length");
 	    gseshlength = YamlGenerator.config.getInt("Guest Session Length");
 	    allowedun = YamlGenerator.config.getString("Legal Usernames Characters");
