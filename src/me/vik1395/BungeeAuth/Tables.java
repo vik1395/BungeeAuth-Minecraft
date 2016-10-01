@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import me.vik1395.BungeeAuth.Utils.Database;
 import me.vik1395.BungeeAuth.Utils.MySQL;
+import me.vik1395.BungeeAuth.Utils.SQLite;
 
 /*
 
@@ -34,7 +35,16 @@ public class Tables
 	
 	public Tables()
 	{
-		db = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
+		if(!Main.sqlite)
+		{
+			db = new MySQL(Main.host, Main.port, Main.dbName, Main.username, Main.pass);
+		}
+		else
+		{
+			String s = Main.plugin.getDataFolder().getAbsolutePath()+"/SQLite.db";
+			System.out.println(s);
+			db = new SQLite(s);
+		}
 	}
 	
 	protected void Create() throws SQLException
@@ -42,89 +52,35 @@ public class Tables
 		Connection c = db.openConnection();
 		Statement statement = c.createStatement();
 		
-		ResultSet bacheck = statement.executeQuery("SHOW TABLES LIKE 'BungeeAuth';");
-		if(!bacheck.next())
+		if(!Main.sqlite)
 		{
-			statement.execute("CREATE TABLE `BungeeAuth` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `playername` VARCHAR(255) NOT NULL, `password` VARCHAR(255) NOT NULL, `pwtype` TINYINT(2) UNSIGNED NOT NULL, "
-					+ "`email` VARCHAR(255) NOT NULL DEFAULT 'player@localhost', `registeredip` VARCHAR(30) NOT NULL, `registerdate` DATE NOT NULL DEFAULT '0001-01-01', `lastip` VARCHAR(30) NOT NULL, `lastseen` DATETIME NOT NULL DEFAULT '0001-01-01 01:01:01', "
-					+ "`version` VARCHAR(10) NOT NULL, `status` VARCHAR(10) NOT NULL, PRIMARY KEY (`id`));");
-			statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
-					+ "'6','player@localhost','1.1.1.1','1.1.1.1','" + Main.version + "','ver'" +");");
+			ResultSet bacheck = statement.executeQuery("SHOW TABLES LIKE 'BungeeAuth';");
+			if(!bacheck.next())
+			{
+				statement.execute("CREATE TABLE `BungeeAuth` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `playername` VARCHAR(255) NOT NULL, `password` VARCHAR(255) NOT NULL, `pwtype` TINYINT(2) UNSIGNED NOT NULL, "
+						+ "`email` VARCHAR(255) NOT NULL DEFAULT 'player@localhost', `registeredip` VARCHAR(30) NOT NULL, `registerdate` DATE NOT NULL DEFAULT '0001-01-01', `lastip` VARCHAR(30) NOT NULL, `lastseen` DATETIME NOT NULL DEFAULT '0001-01-01 01:01:01', "
+						+ "`version` VARCHAR(10) NOT NULL, `status` VARCHAR(10) NOT NULL, PRIMARY KEY (`id`));");
+				statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
+						+ "'6','player@localhost','1.1.1.1','1.1.1.1','" + Main.version + "','ver'" +");");
+			}
 		}
+		
 		else
 		{
-			ResultSet verCheck = c.getMetaData().getColumns(null, null, "BungeeAuth", "version");
-			ResultSet bunCheck = statement.executeQuery("SELECT * FROM BungeeAuth WHERE playername = 'bungeeauth';");
-			
-			if(!verCheck.next())
+			ResultSet bacheck = statement.executeQuery("SELECT * FROM sqlite_master WHERE name ='BungeeAuth' and type='table'; ");
+			if(!bacheck.next())
 			{
-				Update();
+				statement.execute("CREATE TABLE `BungeeAuth` (`id` INTEGER NOT NULL , `playername` VARCHAR(255) NOT NULL, `password` VARCHAR(255) NOT NULL, `pwtype` TINYINT(2) NOT NULL, "
+						+ "`email` VARCHAR(255) NOT NULL DEFAULT 'player@localhost', `registeredip` VARCHAR(30) NOT NULL, `registerdate` DATE NOT NULL DEFAULT '0001-01-01', `lastip` VARCHAR(30) NOT NULL, `lastseen` DATETIME NOT NULL DEFAULT '0001-01-01 01:01:01', "
+						+ "`version` VARCHAR(10) NOT NULL, `status` VARCHAR(10) NOT NULL, PRIMARY KEY (`id`));");
+				statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
+						+ "'6','player@localhost','1.1.1.1','1.1.1.1','" + Main.version + "','ver'" +");");
 			}
-			else if(!bunCheck.next())
-			{
-				Update2();
-			}
-			else
-			{}
-			
 		}
 		
 		statement.close();
 		c.close();
 		db.closeConnection();
-	}
-	
-	protected void Update() throws SQLException
-	{
-		Connection c = db.openConnection();
-		Statement statement = c.createStatement();
-		
-		ResultSet bacheck = statement.executeQuery("SHOW TABLES LIKE 'BungeeAuth';");
-		if(bacheck.next())
-		{
-			//statement.execute("CREATE TABLE `BungeeAuth` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `playername` VARCHAR(255) NOT NULL, `password` VARCHAR(255) NOT NULL, `pwtype` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (`id`));");
-			statement.executeUpdate("UPDATE `BungeeAuth` SET `pwtype` = '6'");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `email` VARCHAR(255) NOT NULL DEFAULT 'player@localhost'");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `registeredip` VARCHAR(30) NOT NULL");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `registerdate` DATE NOT NULL DEFAULT '0001-01-01'");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `lastip` VARCHAR(30) NOT NULL");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `lastseen` DATETIME NOT NULL DEFAULT '0001-01-01 01:01:01'");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `version` VARCHAR(10) NOT NULL");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `status` VARCHAR(10) NOT NULL");
-			statement.executeUpdate("UPDATE `BungeeAuth` SET `version` = '" + Main.version + "'");
-			statement.executeUpdate("UPDATE `BungeeAuth` SET `registerdate` = '0001-01-01'");
-			statement.executeUpdate("UPDATE `BungeeAuth` SET `lastseen` = '0001-01-01 01:01:01'");
-			statement.executeUpdate("UPDATE `BungeeAuth` SET `email` = 'player@localhost'");
-			statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
-					+ "'6','player@localhost','1.1.1.1','1.1.1.1','" + Main.version + "','ver'" +");");
-		}
-		
-		statement.close();
-		c.close();
-		db.closeConnection();
-	}
-	
-	protected void Update2() throws SQLException
-	{
-		Connection c = db.openConnection();
-		Statement statement = c.createStatement();
-		
-		ResultSet bacheck = statement.executeQuery("SHOW TABLES LIKE 'BungeeAuth';");
-		if(bacheck.next())
-		{
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` DROP `registerdate`");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `registerdate` DATE NOT NULL DEFAULT '0001-01-01' AFTER `registeredip`");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` DROP `lastseen`");
-			statement.executeUpdate("ALTER TABLE `BungeeAuth` ADD `lastseen` DATETIME NOT NULL DEFAULT '0001-01-01 01:01:01' AFTER `lastip`");
-			//statement.executeUpdate("UPDATE `BungeeAuth` SET `registerdate` = '0001-01-01'");
-			//statement.executeUpdate("UPDATE `BungeeAuth` SET `lastseen` = '0001-01-01 01:01:01'");
-			statement.executeUpdate("UPDATE `BungeeAuth` SET `version` = '" + Main.version + "'");
-			statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `lastip`, `version`, `status`) VALUES ('bungeeauth','1000:5b42403130656137333635:c23a89d4186147d701d71e2036defc00c76438e33ec5e38ed5e8310b9e378d20b290c9ecad558b488acf0012c774d52b2aa9918c40b2a091febf2f963a6567b2',"
-					+ "'6','player@localhost','1.1.1.1','1.1.1.1','" + Main.version + "','ver'" +");");
-		}
-		
-		statement.close();
-		c.close();
 	}
 	
 	

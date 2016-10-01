@@ -1,5 +1,8 @@
 # BungeeAuth Config File
 
+Use SQLite: true
+# Set this to true if you want to use a file based database (SQLite) rather than MySQL
+
 Host: 127.0.0.1
 # Please enter the Host of your MySQL Database here.
 
