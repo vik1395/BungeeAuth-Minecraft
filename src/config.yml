@@ -52,6 +52,9 @@ Password Tries: 5
 Wrong Password Timeout: 5
 # Timeout (in minutes) for players who spam commands. The timeout occurs if a player tries to use a BungeeAuth command more than 10 times. Set this to 0 to disable this feature.
 
+Guest Server Failsafe Check: true
+# A failsafe method that runs every 10 seconds to check if a guest player is in AuthLobby, and if not, moves them to AuthLobby.
+
 #---------------------------- PHP API AREA ----------------------------#
 
 Enable PHP API: false

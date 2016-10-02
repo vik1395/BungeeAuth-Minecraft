@@ -31,7 +31,7 @@ public class Login extends Command
 		super("login", "");
 	}
 
-	private Tables ct = new Tables();
+	private static Tables ct = new Tables();
 	HashMap<String, Integer> wrongpass = new HashMap<>();
 	
 	@Override
@@ -43,6 +43,34 @@ public class Login extends Command
 			ProxiedPlayer p = (ProxiedPlayer)s;
 			String pName = p.getName();
 			String status = ct.getStatus(p.getName());
+			
+			if(args.length>0&&args[0].equals("force"))
+			{
+				if(p.hasPermission("bauth.forcelogin"))
+				{
+					if(args.length>1)
+					{
+						if(forceLogin(pName))
+						{
+							p.sendMessage(new ComponentBuilder(Main.force_login).color(ChatColor.GREEN).create());
+						}
+						else
+						{
+							p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", pName)).color(ChatColor.RED).create());
+						}
+					}
+					else
+					{
+						p.sendMessage(new ComponentBuilder("Usage: /login force [player]").color(ChatColor.RED).create());
+					}
+				}
+				else
+				{
+					p.sendMessage(new ComponentBuilder(Main.no_perm).color(ChatColor.RED).create());
+				}
+				return;
+			}
+			
 		    if(status.equalsIgnoreCase("online") || Main.plonline.contains(p.getName()))
 		    {
 				p.sendMessage(new ComponentBuilder(Main.already_in).color(ChatColor.GREEN).create());
@@ -119,15 +147,44 @@ public class Login extends Command
 						
 						else
 						{
-							Main.plonline.add(p.getName());
-							ct.setStatus(p.getName(), "online");
+							Main.plonline.add(pName);
+							ct.setStatus(pName, "online");
 							ListenerClass.movePlayer(p, false);
-							ListenerClass.prelogin.get(p.getName()).cancel();
+							ListenerClass.prelogin.get(pName).cancel();
+							if(ListenerClass.guest.contains(p))
+							{
+								for(int i=0; i<ListenerClass.guest.size();i++)
+								{
+									if(ListenerClass.guest.get(i).equals(p))
+									{
+										ListenerClass.guest.remove(i);
+									}
+								}
+							}
 							p.sendMessage(new ComponentBuilder(Main.login_success).color(ChatColor.GREEN).create());
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	public static boolean forceLogin(String pName)
+	{
+		if(!ct.checkPlayerEntry(pName))
+		{
+			return false;
+		}
+		Main.plonline.add(pName);
+		ct.setStatus(pName, "online");
+		ct.setLastSeen(pName, null, null);
+		ProxiedPlayer target = Main.plugin.getProxy().getPlayer(pName);
+		if(target!=null)
+		{
+			ListenerClass.prelogin.get(pName).cancel();
+			ListenerClass.movePlayer(target, false);
+			target.sendMessage(new ComponentBuilder(Main.login_success).color(ChatColor.GREEN).create());
+		}
+		return true;
 	}
 }

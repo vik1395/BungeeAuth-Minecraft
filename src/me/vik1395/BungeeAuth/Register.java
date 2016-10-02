@@ -1,5 +1,11 @@
 package me.vik1395.BungeeAuth;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+
+import me.vik1395.BungeeAuth.Password.PasswordHandler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -23,7 +29,7 @@ You may find an abridged version of the License at http://creativecommons.org/li
 
 public class Register extends Command
 {
-	private Tables t = new Tables();
+	private static Tables t = new Tables();
 	
 	public Register() 
 	{
@@ -41,29 +47,36 @@ public class Register extends Command
 			pCheck = t.checkPlayerEntry(pName);
 			String email = "";
 			
-			if(args[0].equals("force")&&p.hasPermission("bauth.forceregister"))
+			if(args.length>0&&args[0].equals("force"))
 			{
-				if(args.length>2)
+				if(p.hasPermission("bauth.forceregister"))
 				{
-					pName = args[1];
-					
-					if(args.length>3)
+					if(args.length>2)
 					{
-						email = args[3];
+						pName = args[1];
+						
+						if(args.length>3)
+						{
+							email = args[3];
+						}
+						
+						else
+						{
+							email = "player@localhost";
+						}
+						
+						registerPlayer(p, pName, email, "1.1.1.1", args[2]);
 					}
-					
 					else
 					{
-						email = "player@localhost";
+						p.sendMessage(new ComponentBuilder("Usage: /register force [player] [password] or /register force [player] [password] [email]").color(ChatColor.RED).create());
 					}
-					
-					Main.registerPlayer(p, pName, email, "1.1.1.1", args[2]);
 				}
 				else
 				{
-					p.sendMessage(new ComponentBuilder("Usage: /register force [password] or /register force [password] [email]").color(ChatColor.RED).create());
+					p.sendMessage(new ComponentBuilder(Main.no_perm).color(ChatColor.RED).create());
 				}
-				
+				return;
 			}
 			
 			if(pCheck)
@@ -116,16 +129,46 @@ public class Register extends Command
 					{
 				    	p.sendMessage(new ComponentBuilder("Usage: /register [password]").color(ChatColor.RED).create());
 					}
+					return;
 				}
 				
 				//checks if its ok to hash and save the player's password
 				if(ch == true)
 				{
-					Main.registerPlayer(p, pName, email, regip, args[0]);
+					registerPlayer(p, pName, email, regip, args[0]);
+					return;
 				}
 			}
 		}
 	}
 	
-	
+	public static boolean registerPlayer(ProxiedPlayer p, String pName, String email, String regip, String pw)
+	{
+		PasswordHandler ph = new PasswordHandler();
+		Random rand = new Random();
+		int maxp = 7; //Total Password Hashing methods.
+		Date dNow = new Date();
+	    SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+		
+		String pType = "" + rand.nextInt(maxp+1);
+		String regdate = ft.format(dNow);
+		String lastip = regip;
+		String lastseen = regdate;
+		String hash = ph.newHash(pw, pType);
+		
+		//creates a new SQL entry with the player's details.
+		try 
+		{
+			t.newPlayerEntry(pName, hash, pType, email, regip, regdate, lastip, lastseen);
+			ListenerClass.prelogin.get(p.getName()).cancel();
+			p.sendMessage(new ComponentBuilder(Main.reg_success).color(ChatColor.GOLD).create());
+			return true;
+		} 
+		catch (SQLException e) 
+		{
+			Main.plugin.getLogger().severe("[BungeeAuth] Error when creating a new player in the MySQL Database");
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

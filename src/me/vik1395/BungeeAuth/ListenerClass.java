@@ -3,8 +3,10 @@ package me.vik1395.BungeeAuth;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +44,7 @@ public class ListenerClass implements Listener
 {
 	private Tables ct = new Tables();
 	public static HashMap<String, ScheduledTask> prelogin = new HashMap<>();
-	
+	public static List<ProxiedPlayer> guest = new ArrayList<ProxiedPlayer>();
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPreLogin(PreLoginEvent ple)
@@ -144,6 +146,16 @@ public class ListenerClass implements Listener
 			ct.setLastSeen(pl.getName(), pl.getAddress().getAddress().getHostAddress(), null);
 		}
 		ct.setStatus(pl.getName(), "offline");
+		if(guest.contains(pl))
+		{
+			for(int i=0; i<guest.size();i++)
+			{
+				if(guest.get(i).equals(pl))
+				{
+					guest.remove(i);
+				}
+			}
+		}
 	}
 	
 	public static void movePlayer(ProxiedPlayer pl, boolean authlobby)
@@ -156,18 +168,12 @@ public class ListenerClass implements Listener
 			if(!(ps.getServerInfo(Main.authlobby)==null))
 			{
 				sinf = ps.getServerInfo(Main.authlobby);
-				if(!connect(pl, sinf, 0))
-				{
-					pl.disconnect(new TextComponent(Main.error_authlobby));
-				}
+				pl.connect(sinf);
 			}
 			else if(!(ps.getServerInfo(Main.authlobby2)==null))
 			{
 				sinf = ps.getServerInfo(Main.authlobby2);
-				if(!connect(pl, sinf, 0))
-				{
-					pl.disconnect(new TextComponent(Main.error_authlobby));
-				}
+				pl.connect(sinf);
 			}
 			else
 			{
@@ -183,15 +189,12 @@ public class ListenerClass implements Listener
 			if(!(ps.getServerInfo(Main.lobby)==null))
 			{
 				sinf = ps.getServerInfo(Main.lobby);
-				if(!connect(pl, sinf, 0))
-				{
-					pl.sendMessage(new ComponentBuilder(Main.error_lobby).color(ChatColor.DARK_RED).create());
-				}
+				pl.connect(sinf);
 			}
 			else if(!(ps.getServerInfo(Main.lobby2)==null))
 			{
 				sinf = ps.getServerInfo(Main.lobby2);
-				connect(pl, sinf, 0);
+				pl.connect(sinf);
 			}
 			else
 			{
@@ -202,22 +205,10 @@ public class ListenerClass implements Listener
 		}
 	}
 	
-	private static boolean connect(ProxiedPlayer pl, ServerInfo sinf, int run)
-	{
-		pl.connect(sinf);
-		if(pl.getServer().getInfo().equals(sinf))
-		{
-			return true;
-		}
-		else if(run<=5)
-		{
-			connect(pl, sinf, run+1);
-		}
-			return false;
-	}
 	
 	protected static void startTask(final ProxiedPlayer pl)
 	{
+		guest.add(pl);
 		if(Main.gseshlength==0)
 		{
 			return;
@@ -229,6 +220,16 @@ public class ListenerClass implements Listener
 				@Override
 				public void run() 
 				{
+					if(guest.contains(pl))
+					{
+						for(int i=0; i<guest.size();i++)
+						{
+							if(guest.get(i).equals(pl))
+							{
+								guest.remove(i);
+							}
+						}
+					}
 					pl.disconnect(new TextComponent(Main.nologin_kick));
 				}
 				

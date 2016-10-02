@@ -2,7 +2,8 @@ package me.vik1395.BungeeAuthAPI;
 
 import java.util.Date;
 
-import me.vik1395.BungeeAuth.Main;
+import me.vik1395.BungeeAuth.Login;
+import me.vik1395.BungeeAuth.Register;
 import me.vik1395.BungeeAuth.Tables;
 import me.vik1395.BungeeAuth.Password.PasswordHandler;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -81,7 +82,7 @@ public class RequestHandler
 	 */
 	public boolean forceRegister(ProxiedPlayer player, String password)
 	{
-		return Main.registerPlayer(player, player.getName(), "player@localhost", "1.1.1.1", password);
+		return Register.registerPlayer(player, player.getName(), "player@localhost", "1.1.1.1", password);
 	}
 	
 	/**
@@ -95,7 +96,19 @@ public class RequestHandler
 	 */
 	public boolean forceRegister(ProxiedPlayer player, String password, String email)
 	{
-		return Main.registerPlayer(player, player.getName(), email, "1.1.1.1", password);
+		return Register.registerPlayer(player, player.getName(), email, "1.1.1.1", password);
+	}
+	
+	/**
+	 * Force login a player without requiring a password.
+	 * 
+	 * @param player The player who is being force registered.
+	 * 
+	 * @return A boolean value representing whether the login was successful, or failed because the player hasn't been registered yet.
+	 */
+	public boolean forceLogin(String player)
+	{
+		return Login.forceLogin(player);
 	}
 	
 	/**
@@ -127,7 +140,7 @@ public class RequestHandler
 	 * 
 	 * @param playerName The name of the player who's status is being retrieved.
 	 * 
-	 * @return A boolean value
+	 * @return A string representation of the player's current status ("online", "offline" or "logout").
 	 */
 	public String getStatus(String playerName)
 	{

@@ -1,19 +1,15 @@
 package me.vik1395.BungeeAuth;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import me.vik1395.BungeeAuth.Password.PasswordHandler;
 import me.vik1395.BungeeAuth.Utils.YamlGenerator;
 import me.vik1395.BungeeAuthAPI.PHP.APISockets;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -34,15 +30,15 @@ You may find an abridged version of the License at http://creativecommons.org/li
 
 public class Main extends Plugin
 {
-	private static Tables ct;
+	private Tables ct;
 	public static List<String> plonline = new ArrayList<String>();
 	public static Plugin plugin;
 	public static int seshlength, phpport, gseshlength, entperip, errlim, pwtimeout, pwtries;
-	public static boolean sqlite, email, phpapi;
+	public static boolean sqlite, email, phpapi, guestfailsafe;
 	public static String version, authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
     reg_success, already_reg, login_success, already_in, logout_success, already_out, reset_noreg, reset_success,
     no_perm, pass_change_success, wrong_pass, welcome_resume, welcome_login, welcome_register, pre_login,
-    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick, allowedun, spammed_password;
+    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick, allowedun, spammed_password, force_login, force_register;
 	public static HashMap<String, Integer> pwspam = new HashMap<>();
 	public static List<String> muted = new ArrayList<String>();
 	
@@ -81,6 +77,11 @@ public class Main extends Plugin
 			
 			APISockets sockets = new APISockets();
 			sockets.enable(phpport);
+		}
+		
+		if(guestfailsafe)
+		{
+			checkGuestServer();
 		}
 		
 		getLogger().info("BungeeAuth has successfully started!");
@@ -124,6 +125,7 @@ public class Main extends Plugin
 	    errlim = YamlGenerator.config.getInt("API Error Limit");
 	    pwtries = YamlGenerator.config.getInt("Password Tries");
 	    pwtimeout = YamlGenerator.config.getInt("Wrong Password Timeout");
+	    guestfailsafe = YamlGenerator.config.getBoolean("Guest Server Failsafe Check");
 
 		illegal_name = YamlGenerator.message.getString("illegal_name");
 		register = YamlGenerator.message.getString("register");
@@ -147,6 +149,8 @@ public class Main extends Plugin
 	    error_authlobby = YamlGenerator.message.getString("error_authlobby");
 	    error_lobby = YamlGenerator.message.getString("error_lobby");
 	    spammed_password = YamlGenerator.message.getString("spammed_password");
+	    force_login = YamlGenerator.message.getString("force_login");
+	    force_register = YamlGenerator.message.getString("force_register");
 	}
 	
 	protected static void startTimeout(final String p)
@@ -163,35 +167,41 @@ public class Main extends Plugin
 		}, (long) Main.pwtimeout, TimeUnit.MINUTES);
 	}
 	
-	public static boolean registerPlayer(ProxiedPlayer p, String pName, String email, String regip, String pw)
+	private void checkGuestServer()
 	{
-		PasswordHandler ph = new PasswordHandler();
-		Random rand = new Random();
-		int maxp = 7; //Total Password Hashing methods.
-		Date dNow = new Date();
-	    SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-		
-		String pType = "" + rand.nextInt(maxp+1);
-		String regdate = ft.format(dNow);
-		String lastip = regip;
-		String lastseen = regdate;
-		String hash = ph.newHash(pw, pType);
-		
-		//creates a new SQL entry with the player's details.
-		try 
+		ServerInfo sinf = null;
+		if(Main.plugin.getProxy().getServerInfo(Main.authlobby)!=null)
 		{
-			ct.newPlayerEntry(pName, hash, pType, email, regip, regdate, lastip, lastseen);
-			ListenerClass.prelogin.get(p.getName()).cancel();
-			p.sendMessage(new ComponentBuilder(Main.reg_success).color(ChatColor.GOLD).create());
-			return true;
-		} 
-		catch (SQLException e) 
-		{
-			Main.plugin.getLogger().severe("[BungeeAuth] Error when creating a new player in the MySQL Database");
-			e.printStackTrace();
-			return false;
+			sinf = Main.plugin.getProxy().getServerInfo(Main.authlobby);
 		}
+		else if(Main.plugin.getProxy().getServerInfo(Main.authlobby2)!=null)
+		{
+			sinf = Main.plugin.getProxy().getServerInfo(Main.authlobby2);
+		}
+		
+		final ServerInfo sinfo = sinf;
+		
+		Main.plugin.getProxy().getScheduler().schedule(Main.plugin, new Runnable() {
+			
+			@Override
+			public void run()
+			{
+				for(int i=0; i<ListenerClass.guest.size();i++)
+				{
+					ProxiedPlayer p = ListenerClass.guest.get(i);
+					
+					if(sinfo==null)
+					{
+						p.disconnect(new TextComponent(Main.error_authlobby));
+						System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
+					}
+					
+					else if(!p.getServer().getInfo().equals(sinfo))
+					{
+						p.connect(sinfo);
+					}
+				}
+			}
+		}, 0l, 10l, TimeUnit.SECONDS);
 	}
-	
-	
 }
