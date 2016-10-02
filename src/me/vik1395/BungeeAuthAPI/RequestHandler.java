@@ -87,6 +87,7 @@ public class RequestHandler
 	/**
 	 * Force register a player with a given password and email.
 	 * 
+	 * @param player The player who is being force registered.
 	 * @param password The password used to register the player.
 	 * @param email The email address of the player being registered.
 	 * 

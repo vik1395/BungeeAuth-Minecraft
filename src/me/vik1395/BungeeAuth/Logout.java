@@ -47,6 +47,7 @@ public class Logout extends Command
 			    }
 		    	
 				ListenerClass.movePlayer(p, true);
+				ListenerClass.startTask(p);
 				p.sendMessage(new ComponentBuilder(Main.logout_success).color(ChatColor.GREEN).create());
 			}
 		    

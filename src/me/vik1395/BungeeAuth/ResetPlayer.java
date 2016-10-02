@@ -61,12 +61,12 @@ public class ResetPlayer extends Command
 					
 					if(!pCheck)
 					{
-						p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", p.getName())).color(ChatColor.RED).create());
+						p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", pName)).color(ChatColor.RED).create());
 					}
 					else
 					{
 						t.removePlayerEntry(pName);
-						p.sendMessage(new ComponentBuilder(Main.reset_success.replace("%player%", p.getName())).color(ChatColor.GOLD).create());
+						p.sendMessage(new ComponentBuilder(Main.reset_success.replace("%player%", pName)).color(ChatColor.GOLD).create());
 						try
 						{
 							ProxiedPlayer resetp = ProxyServer.getInstance().getPlayer(pName);
@@ -86,7 +86,7 @@ public class ResetPlayer extends Command
 					
 					if(!pCheck)
 					{
-						p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", p.getName())).color(ChatColor.RED).create());
+						p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", pName)).color(ChatColor.RED).create());
 					}
 					else
 					{
@@ -97,7 +97,7 @@ public class ResetPlayer extends Command
 						String hash = ph.newHash(pw, pType);
 						
 						t.updatePassword(pName, hash, pType);
-						p.sendMessage(new ComponentBuilder(Main.reset_success.replace("%player%", p.getName()) + ": '" + pw + "' .").color(ChatColor.GOLD).create());
+						p.sendMessage(new ComponentBuilder(Main.reset_success.replace("%player%", pName) + ": '" + pw + "' .").color(ChatColor.GOLD).create());
 						try
 						{
 							ProxiedPlayer resetp = ProxyServer.getInstance().getPlayer(pName);

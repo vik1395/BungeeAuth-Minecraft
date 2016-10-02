@@ -1,4 +1,6 @@
 /target/classes/
 /target/maven-archiver/
 /target/maven-status/
-/target/deploy/
+/target/archive-tmp/
+/target/generated-sources/
+/doc/

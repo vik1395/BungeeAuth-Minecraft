@@ -1,22 +1,22 @@
 # BungeeAuth Config File
 
-Use SQLite: true
+Use SQLite: false
 # Set this to true if you want to use a file based database (SQLite) rather than MySQL
 
 Host: 127.0.0.1
-# Please enter the Host of your MySQL Database here.
+# Please enter the Host of your MySQL database here.
 
 Port: 3306
-# Please enter the port where your MySQL Database is hosted.
+# Please enter the port where your MySQL database is hosted.
 
 Username: root
-# The Username which should be used to auth against the Database.
+# The Username which should be used to login to the MySQL database.
 
 Password: 'pass'
-# The Password which should be used to auth against the Database. If you don't have a password, please leave two single quotation marks (') in this field.
+# The Password which should be used to login to the MySQL database. If you don't have a password, please leave two single quotation marks (') in this field.
 
 DBName: Bungee
-#The name of the database where BungeeAuth's Tables shall be created.
+#The name of the MySQL database where BungeeAuth's Tables shall be created.
 
 Lobby: Lobby
 # The name of the lobby server.
@@ -38,7 +38,7 @@ Session Length: 5
 # having to type their password again. If user logs in from a different IP, they will be asked to type their password again for security reasons.
 
 Guest Session Length: 60
-# How long (in seconds) the user has before they have to register or login.
+# How long (in seconds) the user has before they have to register or login. Set this to 0 to disable guest session time limits.
 
 Legal Usernames Characters: "[a-zA-Z0-9_]*"
 # Allowed Characters in Usernames (). Enclose in quotation marks.

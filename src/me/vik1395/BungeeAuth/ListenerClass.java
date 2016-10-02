@@ -103,7 +103,6 @@ public class ListenerClass implements Listener
 					{
 						Main.plonline.add(pl.getName());
 					}
-
 					movePlayer(pl, false);
 			}
 			else
@@ -153,54 +152,88 @@ public class ListenerClass implements Listener
 		
 		if(authlobby)
 		{
+			ServerInfo sinf = null;
 			if(!(ps.getServerInfo(Main.authlobby)==null))
 			{
-				ServerInfo sinf = ps.getServerInfo(Main.authlobby);
-				pl.connect(sinf);
+				sinf = ps.getServerInfo(Main.authlobby);
+				if(!connect(pl, sinf, 0))
+				{
+					pl.disconnect(new TextComponent(Main.error_authlobby));
+				}
 			}
 			else if(!(ps.getServerInfo(Main.authlobby2)==null))
 			{
-				ServerInfo sinf = ps.getServerInfo(Main.authlobby2);
-				pl.connect(sinf);
+				sinf = ps.getServerInfo(Main.authlobby2);
+				if(!connect(pl, sinf, 0))
+				{
+					pl.disconnect(new TextComponent(Main.error_authlobby));
+				}
 			}
 			else
 			{
-				pl.sendMessage(new ComponentBuilder(Main.error_authlobby).color(ChatColor.DARK_RED).create());
+				pl.disconnect(new TextComponent(Main.error_authlobby));
 				System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
+				return;
 			}
+			
 		}
 		else
 		{
+			ServerInfo sinf = null;
 			if(!(ps.getServerInfo(Main.lobby)==null))
 			{
-				ServerInfo sinf = ps.getServerInfo(Main.lobby);
-				pl.connect(sinf);
+				sinf = ps.getServerInfo(Main.lobby);
+				if(!connect(pl, sinf, 0))
+				{
+					pl.sendMessage(new ComponentBuilder(Main.error_lobby).color(ChatColor.DARK_RED).create());
+				}
 			}
 			else if(!(ps.getServerInfo(Main.lobby2)==null))
 			{
-				ServerInfo sinf = ps.getServerInfo(Main.lobby2);
-				pl.connect(sinf);
+				sinf = ps.getServerInfo(Main.lobby2);
+				connect(pl, sinf, 0);
 			}
 			else
 			{
 				pl.sendMessage(new ComponentBuilder(Main.error_lobby).color(ChatColor.DARK_RED).create());
 				System.err.println("[BungeeAuth] Lobby and Fallback Lobby not found!");
+				return;
 			}
 		}
 	}
 	
-	private void startTask(final ProxiedPlayer pl)
+	private static boolean connect(ProxiedPlayer pl, ServerInfo sinf, int run)
 	{
+		pl.connect(sinf);
+		if(pl.getServer().getInfo().equals(sinf))
+		{
+			return true;
+		}
+		else if(run<=5)
+		{
+			connect(pl, sinf, run+1);
+		}
+			return false;
+	}
+	
+	protected static void startTask(final ProxiedPlayer pl)
+	{
+		if(Main.gseshlength==0)
+		{
+			return;
+		}
+		else
+		{
+			prelogin.put(pl.getName(), Main.plugin.getProxy().getScheduler().schedule(Main.plugin, new Runnable() {
 
-		prelogin.put(pl.getName(), Main.plugin.getProxy().getScheduler().schedule(Main.plugin, new Runnable() {
-
-			@Override
-			public void run() 
-			{
-				pl.disconnect(new TextComponent(Main.nologin_kick));
-			}
-			
-		}, (long) Main.gseshlength, TimeUnit.SECONDS));
+				@Override
+				public void run() 
+				{
+					pl.disconnect(new TextComponent(Main.nologin_kick));
+				}
+				
+			}, (long) Main.gseshlength, TimeUnit.SECONDS));
+		}
 	}
 	
 	

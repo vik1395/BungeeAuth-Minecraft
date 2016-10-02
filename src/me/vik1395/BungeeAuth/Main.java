@@ -43,8 +43,8 @@ public class Main extends Plugin
     reg_success, already_reg, login_success, already_in, logout_success, already_out, reset_noreg, reset_success,
     no_perm, pass_change_success, wrong_pass, welcome_resume, welcome_login, welcome_register, pre_login,
     error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick, allowedun, spammed_password;
-	public static HashMap<ProxiedPlayer, Integer> pwspam = new HashMap<>();
-	public static List<ProxiedPlayer> muted = new ArrayList<ProxiedPlayer>();
+	public static HashMap<String, Integer> pwspam = new HashMap<>();
+	public static List<String> muted = new ArrayList<String>();
 	
 	public void onEnable()
 	{
@@ -149,15 +149,15 @@ public class Main extends Plugin
 	    spammed_password = YamlGenerator.message.getString("spammed_password");
 	}
 	
-	protected static void startTimeout(final ProxiedPlayer pl)
+	protected static void startTimeout(final String p)
 	{
 		Main.plugin.getProxy().getScheduler().schedule(Main.plugin, new Runnable() {
 
 			@Override
 			public void run() 
 			{
-				pwspam.remove(pl);
-				muted.remove(pl);
+				pwspam.remove(p);
+				muted.remove(p);
 			}
 			
 		}, (long) Main.pwtimeout, TimeUnit.MINUTES);
@@ -169,7 +169,7 @@ public class Main extends Plugin
 		Random rand = new Random();
 		int maxp = 7; //Total Password Hashing methods.
 		Date dNow = new Date();
-	    SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd HH:mm:ss");
+	    SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 		
 		String pType = "" + rand.nextInt(maxp+1);
 		String regdate = ft.format(dNow);

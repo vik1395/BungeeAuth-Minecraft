@@ -50,7 +50,7 @@ public class Login extends Command
 			
 			else
 			{
-				if(Main.muted.contains(p))
+				if(Main.muted.contains(pName))
 				{
 					p.sendMessage(new ComponentBuilder(Main.spammed_password).color(ChatColor.RED).create());
 					return;
@@ -95,24 +95,23 @@ public class Login extends Command
 						{
 							if(Main.pwtries>0)
 							{
-								if(Main.pwspam.containsKey(p))
+								if(Main.pwspam.containsKey(pName))
 								{
-									int tries = Main.pwspam.get(p)+1;
+									int tries = Main.pwspam.get(pName)+1;
 									 
-									if(tries>=10)
+									if(tries>=Main.pwtries)
 									{
-										Main.startTimeout(p);
-										Main.muted.add(p);
-										return;
+										Main.startTimeout(pName);
+										Main.muted.add(pName);
 									}
 									else
 									{
-										Main.pwspam.put(p, tries);
+										Main.pwspam.put(pName, tries);
 									}
 								}
 								else
 								{
-									Main.pwspam.put(p, 1);
+									Main.pwspam.put(pName, 1);
 								}
 							}
 							p.sendMessage(new ComponentBuilder(Main.wrong_pass).color(ChatColor.RED).create());
