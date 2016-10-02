@@ -1,11 +1,20 @@
 package me.vik1395.BungeeAuth;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
+import me.vik1395.BungeeAuth.Password.PasswordHandler;
 import me.vik1395.BungeeAuth.Utils.YamlGenerator;
 import me.vik1395.BungeeAuthAPI.PHP.APISockets;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 /*
@@ -25,15 +34,17 @@ You may find an abridged version of the License at http://creativecommons.org/li
 
 public class Main extends Plugin
 {
-	Tables ct;
+	private static Tables ct;
 	public static List<String> plonline = new ArrayList<String>();
 	public static Plugin plugin;
-	public static int seshlength, phpport, gseshlength, entperip, errlim;
+	public static int seshlength, phpport, gseshlength, entperip, errlim, pwtimeout, pwtries;
 	public static boolean sqlite, email, phpapi;
 	public static String version, authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
     reg_success, already_reg, login_success, already_in, logout_success, already_out, reset_noreg, reset_success,
     no_perm, pass_change_success, wrong_pass, welcome_resume, welcome_login, welcome_register, pre_login,
-    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick, allowedun;
+    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick, allowedun, spammed_password;
+	public static HashMap<ProxiedPlayer, Integer> pwspam = new HashMap<>();
+	public static List<ProxiedPlayer> muted = new ArrayList<ProxiedPlayer>();
 	
 	public void onEnable()
 	{
@@ -89,7 +100,7 @@ public class Main extends Plugin
 		}
 	}
 	
-	public static void loadYaml()
+	private void loadYaml()
 	{
 
 	    sqlite = YamlGenerator.config.getBoolean("Use SQLite");
@@ -111,8 +122,10 @@ public class Main extends Plugin
 	    phpport = YamlGenerator.config.getInt("PHP API Port");
 	    phppass = YamlGenerator.config.getString("API Password");
 	    errlim = YamlGenerator.config.getInt("API Error Limit");
+	    pwtries = YamlGenerator.config.getInt("Password Tries");
+	    pwtimeout = YamlGenerator.config.getInt("Wrong Password Timeout");
 
-		illegal_name = YamlGenerator.config.getString("illegal_name");
+		illegal_name = YamlGenerator.message.getString("illegal_name");
 		register = YamlGenerator.message.getString("register");
 		reg_success = YamlGenerator.message.getString("reg_success");
 		already_reg = YamlGenerator.message.getString("already_reg");
@@ -133,5 +146,52 @@ public class Main extends Plugin
 		pre_login = YamlGenerator.message.getString("pre_login");
 	    error_authlobby = YamlGenerator.message.getString("error_authlobby");
 	    error_lobby = YamlGenerator.message.getString("error_lobby");
+	    spammed_password = YamlGenerator.message.getString("spammed_password");
 	}
+	
+	protected static void startTimeout(final ProxiedPlayer pl)
+	{
+		Main.plugin.getProxy().getScheduler().schedule(Main.plugin, new Runnable() {
+
+			@Override
+			public void run() 
+			{
+				pwspam.remove(pl);
+				muted.remove(pl);
+			}
+			
+		}, (long) Main.pwtimeout, TimeUnit.MINUTES);
+	}
+	
+	public static boolean registerPlayer(ProxiedPlayer p, String pName, String email, String regip, String pw)
+	{
+		PasswordHandler ph = new PasswordHandler();
+		Random rand = new Random();
+		int maxp = 7; //Total Password Hashing methods.
+		Date dNow = new Date();
+	    SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd HH:mm:ss");
+		
+		String pType = "" + rand.nextInt(maxp+1);
+		String regdate = ft.format(dNow);
+		String lastip = regip;
+		String lastseen = regdate;
+		String hash = ph.newHash(pw, pType);
+		
+		//creates a new SQL entry with the player's details.
+		try 
+		{
+			ct.newPlayerEntry(pName, hash, pType, email, regip, regdate, lastip, lastseen);
+			ListenerClass.prelogin.get(p.getName()).cancel();
+			p.sendMessage(new ComponentBuilder(Main.reg_success).color(ChatColor.GOLD).create());
+			return true;
+		} 
+		catch (SQLException e) 
+		{
+			Main.plugin.getLogger().severe("[BungeeAuth] Error when creating a new player in the MySQL Database");
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
 }

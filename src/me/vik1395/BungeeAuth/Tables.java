@@ -111,11 +111,10 @@ public class Tables
 			e.printStackTrace();
 		}
 		
-		
 		return check;
 	}
 	
-	protected void newPlayerEntry(String player, String phash, String ptype, String email, String regip, String regdate, String lastip, String lastseen) throws SQLException
+	public void newPlayerEntry(String player, String phash, String ptype, String email, String regip, String regdate, String lastip, String lastseen) throws SQLException
 	{
 		Connection c = db.openConnection();
 		Statement statement = c.createStatement();

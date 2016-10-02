@@ -40,8 +40,9 @@ You may find an abridged version of the License at http://creativecommons.org/li
 
 public class ListenerClass implements Listener
 {
-	Tables ct = new Tables();
+	private Tables ct = new Tables();
 	public static HashMap<String, ScheduledTask> prelogin = new HashMap<>();
+	
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPreLogin(PreLoginEvent ple)
@@ -69,7 +70,6 @@ public class ListenerClass implements Listener
 			}
 			pl.sendMessage(new ComponentBuilder(Main.welcome_register.replace("%player%", pl.getName()).replace("%email%", emailCh)).color(ChatColor.RED).create());
 			startTask(pl);
-			//pl.sendMessage(new ComponentBuilder("").color(ChatColor.RED).create());
 		}
 		
 		//Checks for player entry in Database
@@ -122,16 +122,17 @@ public class ListenerClass implements Listener
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChatEvent(ChatEvent event) {
-	  ProxiedPlayer p = (ProxiedPlayer) event.getSender();
-	  String msg = event.getMessage();
-	  String arr[] = msg.split(" ");
-	  String cmd = arr[0];
-	  
-	  if(!Main.plonline.contains(p.getName()) && !cmd.equalsIgnoreCase("/login") && !cmd.equalsIgnoreCase("/register"))
-	  {
-		  event.setCancelled(true);
-		  p.sendMessage(new ComponentBuilder(Main.pre_login).color(ChatColor.GRAY).create());
-	  }
+		ProxiedPlayer p = (ProxiedPlayer) event.getSender();
+		String msg = event.getMessage();
+		String arr[] = msg.split(" ");
+		String cmd = arr[0];
+		  
+		if(!Main.plonline.contains(p.getName()) && !cmd.equalsIgnoreCase("/login") && !cmd.equalsIgnoreCase("/register"))
+		{
+			event.setCancelled(true);
+			p.sendMessage(new ComponentBuilder(Main.pre_login).color(ChatColor.GRAY).create());
+			return;
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -201,4 +202,6 @@ public class ListenerClass implements Listener
 			
 		}, (long) Main.gseshlength, TimeUnit.SECONDS));
 	}
+	
+	
 }

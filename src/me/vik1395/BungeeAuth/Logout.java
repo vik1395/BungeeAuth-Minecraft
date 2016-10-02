@@ -28,7 +28,7 @@ public class Logout extends Command
 		super("logout", "");
 	}
 
-	Tables ct = new Tables();
+	private Tables ct = new Tables();
 	
 	@Override
 	public void execute(CommandSender s, String[] args) 

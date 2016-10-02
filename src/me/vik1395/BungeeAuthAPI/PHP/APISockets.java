@@ -162,9 +162,9 @@ public class APISockets
 				}
 			}
 			
-			case("checkPlayerEntry"):
+			case("isRegistered"):
 			{
-				if(rh.checkPlayerEntry(rawreq[1]))
+				if(rh.isRegistered(rawreq[1]))
 				{
 					return "true";
 				}

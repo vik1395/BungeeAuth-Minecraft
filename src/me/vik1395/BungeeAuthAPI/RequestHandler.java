@@ -2,8 +2,10 @@ package me.vik1395.BungeeAuthAPI;
 
 import java.util.Date;
 
+import me.vik1395.BungeeAuth.Main;
 import me.vik1395.BungeeAuth.Tables;
 import me.vik1395.BungeeAuth.Password.PasswordHandler;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /*
 
@@ -18,13 +20,11 @@ You may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
 You may find an abridged version of the License at http://creativecommons.org/licenses/by-sa/4.0/
- */
-
-//Ctrl-Shift-J
+*/
 
 /**
  * @author Vik1395
- * @version 1.3
+ * @version 1.4
  */
 public class RequestHandler 
 {
@@ -45,17 +45,61 @@ public class RequestHandler
 		return ph.checkPassword(pwToCheck, pwType, playerName);
 	}
 	
-	/*
+	/**
+	 * Check if a player is registered on BungeeAuth.
+	 * 
 	 * @param playerName The name of the player who's data entry is being checked.
 	 * 
 	 * @return A boolean value showing whether there's an entry of the player in the database or not
 	 */
+	@Deprecated
 	public boolean checkPlayerEntry(String playerName)
 	{
 		return ct.checkPlayerEntry(playerName);
 	}
 	
-	/*
+	
+	/**
+	 * Check if a given player is registered on BungeeAuth.
+	 * 
+	 * @param playerName The name of the player who's data entry is being checked.
+	 * 
+	 * @return A boolean value showing whether there's an entry of the player in the database or not
+	 */
+	public boolean isRegistered(String playerName)
+	{
+		return ct.checkPlayerEntry(playerName);
+	}
+	
+	/**
+	 * Force register a player with a given password.
+	 * 
+	 * @param player The player who is being force registered.
+	 * @param password The password used to register the player.
+	 * 
+	 * @return A boolean value representing whether the registration was successful.
+	 */
+	public boolean forceRegister(ProxiedPlayer player, String password)
+	{
+		return Main.registerPlayer(player, player.getName(), "player@localhost", "1.1.1.1", password);
+	}
+	
+	/**
+	 * Force register a player with a given password and email.
+	 * 
+	 * @param password The password used to register the player.
+	 * @param email The email address of the player being registered.
+	 * 
+	 * @return A boolean value representing whether the registration was successful.
+	 */
+	public boolean forceRegister(ProxiedPlayer player, String password, String email)
+	{
+		return Main.registerPlayer(player, player.getName(), email, "1.1.1.1", password);
+	}
+	
+	/**
+	 * Get the last seen IP address of a player.
+	 * 
 	 * @param playerName The name of the player who's IP is being retrieved.
 	 * 
 	 * @return A String representation of the player's last seen IP (192.168.1.1)
@@ -65,7 +109,9 @@ public class RequestHandler
 		return ct.getLastIP(playerName);
 	}
 	
-	/*
+	/**
+	 * Get the last seen date of a player.
+	 * 
 	 * @param playerName The name of the player who's last seen date is being retrieved.
 	 * 
 	 * @return The player's last seen Date. (2015-09-15 02:16:34)
@@ -75,7 +121,9 @@ public class RequestHandler
 		return ct.getLastSeen(playerName);
 	}
 	
-	/*
+	/**
+	 * Get the current status of a given player.
+	 * 
 	 * @param playerName The name of the player who's status is being retrieved.
 	 * 
 	 * @return A boolean value
@@ -85,7 +133,9 @@ public class RequestHandler
 		return ct.getStatus(playerName);
 	}
 	
-	/*
+	/**
+	 * Gets the player's registered email address.
+	 * 
 	 * @param playerName The name of the player who's email is being retrieved.
 	 * 
 	 * @return A string representation of the player's email (suggest@vik1395.me).
@@ -95,7 +145,9 @@ public class RequestHandler
 		return ct.getEmail(playerName);
 	}
 	
-	/*
+	/**
+	 * Gets the IP address of a player at the time of registration.
+	 * 
 	 * @param playerName The name of the player who's IP at the time of registration is being retrieved.
 	 * 
 	 * @return A String representation of the player's IP at registration (192.168.1.1)
@@ -105,7 +157,9 @@ public class RequestHandler
 		return ct.getRegisteredIP(playerName);
 	}
 	
-	/*
+	/**
+	 * Get when the player first registered on BungeeAuth.
+	 * 
 	 * @param playerName The name of the player who's registration date is being retrieved.
 	 * 
 	 * @return The player's registration date (2014-07-10 14:10:00)

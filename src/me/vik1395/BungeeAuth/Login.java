@@ -1,5 +1,7 @@
 package me.vik1395.BungeeAuth;
 
+import java.util.HashMap;
+
 import me.vik1395.BungeeAuth.Password.PasswordHandler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -29,7 +31,8 @@ public class Login extends Command
 		super("login", "");
 	}
 
-	Tables ct = new Tables();
+	private Tables ct = new Tables();
+	HashMap<String, Integer> wrongpass = new HashMap<>();
 	
 	@Override
 	public void execute(CommandSender s, String[] args) 
@@ -47,6 +50,12 @@ public class Login extends Command
 			
 			else
 			{
+				if(Main.muted.contains(p))
+				{
+					p.sendMessage(new ComponentBuilder(Main.spammed_password).color(ChatColor.RED).create());
+					return;
+				}
+				
 				pCheck = ct.checkPlayerEntry(pName);
 				
 				if(!pCheck)
@@ -84,6 +93,28 @@ public class Login extends Command
 						
 						if(!PwCheck)
 						{
+							if(Main.pwtries>0)
+							{
+								if(Main.pwspam.containsKey(p))
+								{
+									int tries = Main.pwspam.get(p)+1;
+									 
+									if(tries>=10)
+									{
+										Main.startTimeout(p);
+										Main.muted.add(p);
+										return;
+									}
+									else
+									{
+										Main.pwspam.put(p, tries);
+									}
+								}
+								else
+								{
+									Main.pwspam.put(p, 1);
+								}
+							}
 							p.sendMessage(new ComponentBuilder(Main.wrong_pass).color(ChatColor.RED).create());
 						}
 						

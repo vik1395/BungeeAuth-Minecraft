@@ -46,6 +46,12 @@ Legal Usernames Characters: "[a-zA-Z0-9_]*"
 Users per IP: 5
 # Number of users that can register (not login) from the same IP.
 
+Password Tries: 5
+# Number of times a player can input a wrong password before getting their account locked. Set this to 0 to disable this feature.
+
+Wrong Password Timeout: 5
+# Timeout (in minutes) for players who spam commands. The timeout occurs if a player tries to use a BungeeAuth command more than 10 times. Set this to 0 to disable this feature.
+
 #---------------------------- PHP API AREA ----------------------------#
 
 Enable PHP API: false

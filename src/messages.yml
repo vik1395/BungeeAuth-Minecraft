@@ -33,3 +33,5 @@ pre_login: "You must login to chat or execute commands."
 
 error_authlobby: "Error! Unable to connect to AuthLobby."
 error_lobby: "Error! Unable to connect to Lobby."
+
+spammed_password: "You have been temporarily muted because you entered the wrong password too many times."
