@@ -21,25 +21,28 @@ I highly recommend that you use one or both of these plugins in your Bukkit/Spig
 
 **Permissions**
 -------------
-bauth.reset - This permission is needed for players who can use the /reset command.
+    bauth.forceregister - This permission is needed to use the /register force command.
+    bauth.forcelogin - This permission is needed to use the /login force command.
+    bauth.reset - This permission is needed for players who can use the /reset command.
 
 **Commands**
 -------------
-    /register [password] - This command is used by first time players to register themselves in the server.
+    /register [password] <email> - This command is used by first time players to register themselves in the server. Email is required if it is enabled in config.yml.
+    
+    /register force [player] [password] <email> - This command allows you to force register a player without needing them to be online. Email is required if it is enabled in config.yml.
     
     /login [password] - This command is used by returning users to login to the server.
     
+    /login force [player] - This commands is used to force login a player without using a password.
+    
     /changepw [old password] [new password] - This command is used by players who want to change their password. It can only be used once the player logs in.
     
-    /reset [player name] - This command is used by admins who want to reset a player's password. Doing this un-registers the player and there is no way of getting his/her password back.
-    
-    A player needs to have the "bauth.reset" permission to use this command.
+    /reset [player] - This command is used by admins who want to reset a player's password. Doing this un-registers the player and there is no way of getting his/her password back.
     
     /logout - This command successfully logs out the player and moves them to the AuthLobby.
 
 **Config**
 -------------
-
 The config.yml for this plugin is located in its data folder, similar to bukkit plugins. It looks similar to this:
 
     # BungeeAuth Config File
@@ -102,6 +105,15 @@ The config.yml for this plugin is located in its data folder, similar to bukkit 
     
     # Number of users that can register (not login) from the same IP.
     
+    Wrong Password Timeout: 3
+	
+	# Timeout (in minutes) for players who spam commands. The timeout occurs if a player tries to use a BungeeAuth command more than 10 times. Set this to 0 to disable this feature.
+
+	Guest Server Failsafe Check: true
+	
+	# A failsafe method that runs every 10 seconds to check if a guest player is in AuthLobby, and if not, moves them to AuthLobby.
+
+    
     #---------------------------- PHP API AREA ----------------------------#
     
     Enable PHP API: false
@@ -120,19 +132,44 @@ The config.yml for this plugin is located in its data folder, similar to bukkit 
     
     # Set the maximum number of wrong api password attempts used by a php script before it's ip gets blocked. IP will be blocked until removed from apithreats.yml
 
-The Plugin automatically creates the MySQL Tables. You just have to input the MySQL Database Host, Login details and Database name in the config file.
+The Plugin automatically creates the MySQL Tables. You just have to input the MySQL Database Host, Login details and Database name in the config file. If you enable SQLite, the plugin creates a SQLite.db file in the config folder. You do not need to change any other database related fields in config.yml if you are using SQLite.
 
 Until the player logs in, he/she wont be able to use any commands except for /register and /login. After disconnecting, depending on the Session Length set by the admin, the player will have a certain amount of time within which they can log back in to the server without having to retype their password, considering they log in from the same IP.
 
 When the player logs in successfully, He/she will be teleported to the Lobby server (if it is different from the Authentication Lobby).
 
+If the player spams /login multiple times (such as in a brute force attack), they are automatically muted for a certain amount of time (specified in the config.yml).
+
 Lobby server and Auth Lobby server in the config **CANNOT** be the same.
 
 You can check out a tutorial of the plugin in Spanish **[HERE](https://www.youtube.com/watch?v=5ptJhP31Oxo)**
 
+**For Developers**
+-------------
+The javadoc for BungeeAuth is available at http://api.vik1395.me/
+
+Adding BungeeAuth as a maven dependency: 
+
+    <repositories>
+        <repository>
+            <id>bungeeauth-repo</id>
+            <url>http://repo.vik1395.me/repositories</url>
+        </repository>
+    </repositories>
+    
+    <dependencies>
+        <dependency>
+            <groupId>me.vik1395</groupId>
+            <artifactId>BungeeAuth</artifactId>
+            <version>VERSION</version>
+        </dependency>
+    </dependencies>
+
+You can browse the repository at http://repo.vik1395.me/
+
 This plugin is licensed under [CC Attribution-NonCommercial-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US). 
 
-In very basic terms, Do whatever you want with the code of this plugin, as long as you give credits to the author and/or the plugin itself.
+In very basic terms, Do whatever you want with the code of this plugin, as long as you don't charge people, and give credits to the author and/or the plugin itself.
 
 To have a secure password, I suggest you follow this:
-![enter image description here](http://imgs.xkcd.com/comics/password_strength.png)
+![xkcd.com Comic](http://imgs.xkcd.com/comics/password_strength.png)
