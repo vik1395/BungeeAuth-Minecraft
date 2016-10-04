@@ -67,4 +67,4 @@ API Password: 'pZe8qNCC6s5NKvYj'
 # The password required in the API requests for a response. If you don't have a password, please leave two single quotation marks (') in this field.
 
 API Error Limit: 5
-# Set the maximum number of wrong api password attempts used by a php script before it's ip gets blocked. IP will be blocked until removed from apithreats.yml
+# Set the maximum number of wrong api password attempts used by a php script before it's ip gets blocked. IP will be blocked until removed from apiblacklist.txt

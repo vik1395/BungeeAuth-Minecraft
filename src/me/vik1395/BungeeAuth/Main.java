@@ -179,7 +179,6 @@ public class Main extends Plugin
 		if(Main.plugin.getProxy().getServerInfo(Main.authlobby)!=null)
 		{
 			sinf = Main.plugin.getProxy().getServerInfo(Main.authlobby);
-			System.out.println("1");
 		}
 		else if(Main.plugin.getProxy().getServerInfo(Main.authlobby2)!=null)
 		{
@@ -196,7 +195,6 @@ public class Main extends Plugin
 				for(int i=0; i<ListenerClass.guest.size();i++)
 				{
 					ProxiedPlayer p = getProxy().getPlayer(ListenerClass.guest.get(i));
-					System.out.println("2");
 					if(p!=null)
 					{
 						if(sinfo==null)
@@ -206,7 +204,6 @@ public class Main extends Plugin
 						}
 						else if(!p.getServer().getInfo().equals(sinfo))
 						{
-							System.out.println("3");
 							p.connect(sinfo);
 						}
 					}
