@@ -37,6 +37,43 @@ public class Logout extends Command
 		{
 			ProxiedPlayer p = (ProxiedPlayer)s;
 			String status = ct.getStatus(p.getName());
+			
+			if(args.length>0&&args[0].equals("force"))
+			{
+				if(p.hasPermission("bauth.forcelogout"))
+				{
+					if(args.length==2)
+					{
+						String pname = args[1];
+						ct.setStatus(pname, "logout");
+				    	ct.setLastSeen(pname, null, "1001-01-01 01:01:01");
+				    	if(Main.plonline.contains(pname))
+					    {
+				    		Main.plonline.remove(pname);
+					    }
+				    	
+				    	if(Main.plugin.getProxy().getPlayer(pname)!=null)
+				    	{
+				    		ProxiedPlayer pl = Main.plugin.getProxy().getPlayer(pname);
+							ListenerClass.movePlayer(pl, true);
+							ListenerClass.startTask(pl);
+							ListenerClass.guest.add(pl.getName());
+							pl.sendMessage(new ComponentBuilder(Main.logout_success).color(ChatColor.GREEN).create());
+				    	}
+				    	p.sendMessage(new ComponentBuilder(Main.force_logout).color(ChatColor.GREEN).create());
+					}
+					else
+					{
+						p.sendMessage(new ComponentBuilder("Usage: /logout force [player]").color(ChatColor.RED).create());
+					}
+				}
+				else
+				{
+					p.sendMessage(new ComponentBuilder(Main.no_perm).color(ChatColor.RED).create());
+				}
+				return;
+			}
+			
 		    if(status.equalsIgnoreCase("online")||Main.plonline.contains(p.getName()))
 		    {
 		    	ct.setStatus(p.getName(), "logout");
@@ -48,7 +85,6 @@ public class Logout extends Command
 		    	
 				ListenerClass.movePlayer(p, true);
 				ListenerClass.startTask(p);
-				ListenerClass.guest.add(p);
 				p.sendMessage(new ComponentBuilder(Main.logout_success).color(ChatColor.GREEN).create());
 			}
 		    

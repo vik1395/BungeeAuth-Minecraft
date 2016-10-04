@@ -44,7 +44,7 @@ public class ListenerClass implements Listener
 {
 	private Tables ct = new Tables();
 	public static HashMap<String, ScheduledTask> prelogin = new HashMap<>();
-	public static List<ProxiedPlayer> guest = new ArrayList<ProxiedPlayer>();
+	public static List<String> guest = new ArrayList<String>();
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPreLogin(PreLoginEvent ple)
@@ -146,11 +146,11 @@ public class ListenerClass implements Listener
 			ct.setLastSeen(pl.getName(), pl.getAddress().getAddress().getHostAddress(), null);
 		}
 		ct.setStatus(pl.getName(), "offline");
-		if(guest.contains(pl))
+		if(guest.contains(pl.getName()))
 		{
 			for(int i=0; i<guest.size();i++)
 			{
-				if(guest.get(i).equals(pl))
+				if(guest.get(i).equals(pl.getName()))
 				{
 					guest.remove(i);
 				}
@@ -208,7 +208,7 @@ public class ListenerClass implements Listener
 	
 	protected static void startTask(final ProxiedPlayer pl)
 	{
-		guest.add(pl);
+		guest.add(pl.getName());
 		if(Main.gseshlength==0)
 		{
 			return;
@@ -220,11 +220,11 @@ public class ListenerClass implements Listener
 				@Override
 				public void run() 
 				{
-					if(guest.contains(pl))
+					if(guest.contains(pl.getName()))
 					{
 						for(int i=0; i<guest.size();i++)
 						{
-							if(guest.get(i).equals(pl))
+							if(guest.get(i).equals(pl.getName()))
 							{
 								guest.remove(i);
 							}

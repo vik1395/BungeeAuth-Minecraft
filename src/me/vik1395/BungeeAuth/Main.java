@@ -31,16 +31,16 @@ You may find an abridged version of the License at http://creativecommons.org/li
 public class Main extends Plugin
 {
 	private Tables ct;
-	public static List<String> plonline = new ArrayList<String>();
+	public static List<String> plonline, muted;
+	public static HashMap<String, Integer> pwspam;
+	public static HashMap<String, Runnable> guestserverchecker;
 	public static Plugin plugin;
 	public static int seshlength, phpport, gseshlength, entperip, errlim, pwtimeout, pwtries;
 	public static boolean sqlite, email, phpapi, guestfailsafe;
 	public static String version, authlobby, authlobby2, lobby, lobby2, host, port, dbName, username, pass, register, 
     reg_success, already_reg, login_success, already_in, logout_success, already_out, reset_noreg, reset_success,
     no_perm, pass_change_success, wrong_pass, welcome_resume, welcome_login, welcome_register, pre_login,
-    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick, allowedun, spammed_password, force_login, force_register;
-	public static HashMap<String, Integer> pwspam = new HashMap<>();
-	public static List<String> muted = new ArrayList<String>();
+    error_authlobby, error_lobby, phppass, reg_limit, illegal_name, nologin_kick, allowedun, spammed_password, force_register, force_login, force_logout;
 	
 	public void onEnable()
 	{
@@ -64,6 +64,11 @@ public class Main extends Plugin
 			e.printStackTrace();
 		}
 
+		plonline = new ArrayList<String>();
+		muted = new ArrayList<String>();
+		pwspam = new HashMap<String, Integer>();
+		guestserverchecker = new HashMap<String, Runnable>();
+		
         getProxy().getPluginManager().registerListener(this, new ListenerClass());
 		getProxy().getPluginManager().registerCommand(this, new Register());
 		getProxy().getPluginManager().registerCommand(this, new Login());
@@ -149,8 +154,9 @@ public class Main extends Plugin
 	    error_authlobby = YamlGenerator.message.getString("error_authlobby");
 	    error_lobby = YamlGenerator.message.getString("error_lobby");
 	    spammed_password = YamlGenerator.message.getString("spammed_password");
-	    force_login = YamlGenerator.message.getString("force_login");
 	    force_register = YamlGenerator.message.getString("force_register");
+	    force_login = YamlGenerator.message.getString("force_login");
+	    force_logout = YamlGenerator.message.getString("force_logout");
 	}
 	
 	protected static void startTimeout(final String p)
@@ -173,6 +179,7 @@ public class Main extends Plugin
 		if(Main.plugin.getProxy().getServerInfo(Main.authlobby)!=null)
 		{
 			sinf = Main.plugin.getProxy().getServerInfo(Main.authlobby);
+			System.out.println("1");
 		}
 		else if(Main.plugin.getProxy().getServerInfo(Main.authlobby2)!=null)
 		{
@@ -188,17 +195,24 @@ public class Main extends Plugin
 			{
 				for(int i=0; i<ListenerClass.guest.size();i++)
 				{
-					ProxiedPlayer p = ListenerClass.guest.get(i);
-					
-					if(sinfo==null)
+					ProxiedPlayer p = getProxy().getPlayer(ListenerClass.guest.get(i));
+					System.out.println("2");
+					if(p!=null)
 					{
-						p.disconnect(new TextComponent(Main.error_authlobby));
-						System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
+						if(sinfo==null)
+						{
+							p.disconnect(new TextComponent(Main.error_authlobby));
+							System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
+						}
+						else if(!p.getServer().getInfo().equals(sinfo))
+						{
+							System.out.println("3");
+							p.connect(sinfo);
+						}
 					}
-					
-					else if(!p.getServer().getInfo().equals(sinfo))
+					else
 					{
-						p.connect(sinfo);
+						ListenerClass.guest.remove(i);
 					}
 				}
 			}

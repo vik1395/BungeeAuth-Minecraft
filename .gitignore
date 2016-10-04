@@ -3,4 +3,5 @@
 /target/maven-status/
 /target/archive-tmp/
 /target/generated-sources/
+/target/deploy/
 /doc/

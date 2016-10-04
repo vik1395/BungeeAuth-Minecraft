@@ -118,7 +118,7 @@ public class Tables
 	{
 		Connection c = db.openConnection();
 		Statement statement = c.createStatement();
-		statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `registerdate`, `lastip`, `lastseen`, `version`, `status`) VALUES ('" + player.toLowerCase() + "','" + phash + "','" + ptype +  "','" + email + "','" + regip + "','" + regdate + "','" + lastip + "','" + lastseen + "','1.0','logout'" +");");
+		statement.execute("INSERT INTO BungeeAuth (`playername`,`password`,`pwtype`, `email`, `registeredip`, `registerdate`, `lastip`, `lastseen`, `version`, `status`) VALUES ('" + player.toLowerCase() + "','" + phash + "','" + ptype +  "','" + email + "','" + regip + "','" + regdate + "','" + lastip + "','" + lastseen + "','" + Main.version + "','logout'" +");");
 		statement.close();
 		c.close();
 	}

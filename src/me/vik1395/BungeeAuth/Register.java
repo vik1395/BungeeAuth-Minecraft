@@ -160,8 +160,11 @@ public class Register extends Command
 		try 
 		{
 			t.newPlayerEntry(pName, hash, pType, email, regip, regdate, lastip, lastseen);
-			ListenerClass.prelogin.get(p.getName()).cancel();
-			p.sendMessage(new ComponentBuilder(Main.reg_success).color(ChatColor.GOLD).create());
+			if(ListenerClass.prelogin.containsKey(p.getName()))
+			{
+				ListenerClass.prelogin.get(p.getName()).cancel();
+			}
+			p.sendMessage(new ComponentBuilder(Main.force_register).color(ChatColor.GOLD).create());
 			return true;
 		} 
 		catch (SQLException e) 

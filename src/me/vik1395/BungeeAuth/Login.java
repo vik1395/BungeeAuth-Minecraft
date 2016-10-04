@@ -50,13 +50,13 @@ public class Login extends Command
 				{
 					if(args.length>1)
 					{
-						if(forceLogin(pName))
+						if(forceLogin(args[1]))
 						{
 							p.sendMessage(new ComponentBuilder(Main.force_login).color(ChatColor.GREEN).create());
 						}
 						else
 						{
-							p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", pName)).color(ChatColor.RED).create());
+							p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", args[1])).color(ChatColor.RED).create());
 						}
 					}
 					else
@@ -147,20 +147,20 @@ public class Login extends Command
 						
 						else
 						{
-							Main.plonline.add(pName);
-							ct.setStatus(pName, "online");
-							ListenerClass.movePlayer(p, false);
-							ListenerClass.prelogin.get(pName).cancel();
-							if(ListenerClass.guest.contains(p))
+							if(ListenerClass.guest.contains(pName))
 							{
 								for(int i=0; i<ListenerClass.guest.size();i++)
 								{
-									if(ListenerClass.guest.get(i).equals(p))
+									if(ListenerClass.guest.get(i).equals(pName))
 									{
 										ListenerClass.guest.remove(i);
 									}
 								}
 							}
+							Main.plonline.add(pName);
+							ct.setStatus(pName, "online");
+							ListenerClass.movePlayer(p, false);
+							ListenerClass.prelogin.get(pName).cancel();
 							p.sendMessage(new ComponentBuilder(Main.login_success).color(ChatColor.GREEN).create());
 						}
 					}

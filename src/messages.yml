@@ -22,8 +22,9 @@ reset_success: "Successfully reset %player%'s password."
 no_perm: "You do not have permission to use this command!"
 reg_limit: "You have reached the maximum number of users allowed to register from the same IP"
 
-force_login: "%player% has been logged in successfully!"
 force_register: "%player%'s account has been registered successfully!"
+force_login: "%player% has been logged in successfully!"
+force_logout: "%player%'s has been logged out successfully!"
 
 pass_change_success: "Password was changed successfully."
 
