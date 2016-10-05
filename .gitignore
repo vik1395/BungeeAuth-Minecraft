@@ -1,7 +1,22 @@
+/doc/
 /target/classes/
 /target/maven-archiver/
 /target/maven-status/
 /target/archive-tmp/
 /target/generated-sources/
 /target/deploy/
-/doc/
+
+# Netbeans
+/nbproject/
+/nbactions-deployer.xml
+/nb-configuration.xml
+
+# Eclipse
+/.classpath
+/.project
+/.settings
+/bin
+
+# Jetbrains
+*.iml
+/.idea
