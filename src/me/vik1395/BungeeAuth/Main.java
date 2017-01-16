@@ -213,6 +213,6 @@ public class Main extends Plugin
 					}
 				}
 			}
-		}, 0l, 10l, TimeUnit.SECONDS);
+		}, 0l, 5l, TimeUnit.SECONDS);
 	}
 }

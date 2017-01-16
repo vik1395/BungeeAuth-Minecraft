@@ -183,6 +183,16 @@ public class Login extends Command
 		{
 			ListenerClass.prelogin.get(pName).cancel();
 			ListenerClass.movePlayer(target, false);
+			if(ListenerClass.guest.contains(p))
+			{
+				for(int i=0; i<ListenerClass.guest.size();i++)
+				{
+					if(ListenerClass.guest.get(i).equals(p))
+					{
+						ListenerClass.guest.remove(i);
+					}
+				}
+			}
 			target.sendMessage(new ComponentBuilder(Main.login_success).color(ChatColor.GREEN).create());
 		}
 		return true;
