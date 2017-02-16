@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.util.logging.Level;
 import me.vik1395.BungeeAuth.Main;
 
 /*
@@ -43,11 +44,10 @@ public class SQLite extends Database {
 	    } 
         catch ( Exception e ) 
         {
-        	System.out.println("[BungeeAuth] Error while creating SQLite Database");
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            System.exit(0);
+            Main.plugin.getLogger().log(Level.SEVERE, "Error while creating SQLite Database", e);
         }
-        return this.connection=c;
+
+        return this.connection = c;
     }
 
     @Override
