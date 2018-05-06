@@ -160,7 +160,13 @@ public class Login extends Command
 							Main.plonline.add(pName);
 							ct.setStatus(pName, "online");
 							ListenerClass.movePlayer(p, false);
-							ListenerClass.prelogin.get(pName).cancel();
+							//If guestsession is set to 0, this will produced an error.
+							//see Issue #15.
+							//This will prevent the error. 
+							if(Main.gseshlength != 0){
+								ListenerClass.prelogin.get(pName).cancel();
+							}
+							
 							p.sendMessage(new ComponentBuilder(Main.login_success).color(ChatColor.GREEN).create());
 						}
 					}
