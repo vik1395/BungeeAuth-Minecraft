@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.Callback;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -20,6 +22,7 @@ import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.md_5.bungee.event.EventHandler;
@@ -45,7 +48,8 @@ public class ListenerClass implements Listener
 	private Tables ct = new Tables();
 	public static HashMap<String, ScheduledTask> prelogin = new HashMap<>();
 	public static List<String> guest = new ArrayList<String>();
-	
+	public static HashMap<String, String> sendbackto = new HashMap<>();
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPreLogin(PreLoginEvent ple)
 	{
@@ -55,16 +59,41 @@ public class ListenerClass implements Listener
 			ple.setCancelled(true);
 		}
 	}
-	
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onServerConnect(ServerConnectEvent sce)
+	{
+		String servername = sce.getTarget().getName();
+		String status = ct.getStatus(sce.getPlayer().getName());
+		if (!(sce.getTarget().getName().equals(Main.authlobby)))
+		{
+			sendbackto.put(sce.getPlayer().getName(), servername);
+			if (!(status.equals("online")))
+			{
+				sce.setCancelled(true);
+				movePlayer(sce.getPlayer(), true);
+				kickPlayerIfServerDead(sce.getPlayer(), sce.getTarget());
+			}
+			return;
+		}
+		// if no return server, kick player
+		else if (Main.strict_authlobby && (status.equals("online") || !(sendbackto.containsKey(sce.getPlayer().getName()))))
+		{
+			sce.setCancelled(true);
+			sce.getPlayer().disconnect(new TextComponent(Main.error_no_server));
+			return;
+		}
+	}
+
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onLogin(PostLoginEvent ple)
 	{
 		ProxiedPlayer pl = ple.getPlayer();
 		boolean check = ct.checkPlayerEntry(pl.getName());
-		
+
 		if(!check)
 		{
-			movePlayer(pl, true);
 			String emailCh = "";
 			if(Main.email)
 			{
@@ -73,29 +102,30 @@ public class ListenerClass implements Listener
 			pl.sendMessage(new ComponentBuilder(Main.welcome_register.replace("%player%", pl.getName()).replace("%email%", emailCh)).color(ChatColor.RED).create());
 			startTask(pl);
 		}
-		
+
 		//Checks for player entry in Database
 		else if(check)
 		{
+			ct.setStatus(pl.getName(), "offline");
 			Date lastseen = ct.getLastSeen(pl.getName());
 			String lastip = ct.getLastIP(pl.getName());
 			String currip = pl.getAddress().getHostString();
-			
+
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 			String sdatenow = df.format(new Date());
 			Date datenow = null;
-			try 
+			try
 			{
 				datenow = df.parse(sdatenow);
-			} 
-			catch (ParseException e) 
+			}
+			catch (ParseException e)
 			{
 				e.printStackTrace();
 			}
-			
+
 			long difference = datenow.getTime() - lastseen.getTime();
 			long diffmin = (difference/1000)/60;
-			
+
 			//checks if player's session is still available
 			if(currip.equals(lastip) && diffmin<=Main.seshlength)
 			{
@@ -113,21 +143,19 @@ public class ListenerClass implements Listener
 				{
 					Main.plonline.remove(pl.getName());
 				}
-				
-				movePlayer(pl, true);
 				pl.sendMessage(new ComponentBuilder(Main.welcome_login).color(ChatColor.RED).create());
 				startTask(pl);
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onChatEvent(ChatEvent event) {
 		ProxiedPlayer p = (ProxiedPlayer) event.getSender();
 		String msg = event.getMessage();
 		String arr[] = msg.split(" ");
 		String cmd = arr[0];
-		  
+
 		if(!Main.plonline.contains(p.getName()) && !cmd.equalsIgnoreCase("/login") && !cmd.equalsIgnoreCase("/register"))
 		{
 			event.setCancelled(true);
@@ -135,11 +163,12 @@ public class ListenerClass implements Listener
 			return;
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuit(PlayerDisconnectEvent pde)
 	{
 		ProxiedPlayer pl = pde.getPlayer();
+		sendbackto.remove(pl.getName());
 		if(Main.plonline.contains(pl.getName()))
 		{
 			Main.plonline.remove(pl.getName());
@@ -157,11 +186,11 @@ public class ListenerClass implements Listener
 			}
 		}
 	}
-	
+
 	public static void movePlayer(ProxiedPlayer pl, boolean authlobby)
 	{
 		ProxyServer ps = Main.plugin.getProxy();
-		
+		Tables ct = new Tables();
 		if(authlobby)
 		{
 			ServerInfo sinf = null;
@@ -170,42 +199,22 @@ public class ListenerClass implements Listener
 				sinf = ps.getServerInfo(Main.authlobby);
 				pl.connect(sinf);
 			}
-			else if(!(ps.getServerInfo(Main.authlobby2)==null))
-			{
-				sinf = ps.getServerInfo(Main.authlobby2);
-				pl.connect(sinf);
-			}
 			else
 			{
 				pl.disconnect(new TextComponent(Main.error_authlobby));
-				System.err.println("[BungeeAuth] AuthLobby and Fallback AuthLobby not found!");
-				return;
+				System.err.println("[BungeeAuth] AuthLobby not found!");
 			}
-			
+
 		}
-		else
+		else if(sendbackto.containsKey(pl.getName()) && !(ps.getServerInfo(sendbackto.get(pl.getName()))==null))
 		{
-			ServerInfo sinf = null;
-			if(!(ps.getServerInfo(Main.lobby)==null))
-			{
-				sinf = ps.getServerInfo(Main.lobby);
-				pl.connect(sinf);
-			}
-			else if(!(ps.getServerInfo(Main.lobby2)==null))
-			{
-				sinf = ps.getServerInfo(Main.lobby2);
-				pl.connect(sinf);
-			}
-			else
-			{
-				pl.sendMessage(new ComponentBuilder(Main.error_lobby).color(ChatColor.DARK_RED).create());
-				System.err.println("[BungeeAuth] Lobby and Fallback Lobby not found!");
-				return;
-			}
+			ServerInfo sinf = ps.getServerInfo(sendbackto.get(pl.getName()));
+			sendbackto.remove(pl.getName());
+			pl.connect(sinf);
 		}
 	}
-	
-	
+
+
 	protected static void startTask(final ProxiedPlayer pl)
 	{
 		guest.add(pl.getName());
@@ -218,7 +227,7 @@ public class ListenerClass implements Listener
 			prelogin.put(pl.getName(), Main.plugin.getProxy().getScheduler().schedule(Main.plugin, new Runnable() {
 
 				@Override
-				public void run() 
+				public void run()
 				{
 					if(guest.contains(pl.getName()))
 					{
@@ -232,10 +241,29 @@ public class ListenerClass implements Listener
 					}
 					pl.disconnect(new TextComponent(Main.nologin_kick));
 				}
-				
+
 			}, (long) Main.gseshlength, TimeUnit.SECONDS));
 		}
 	}
-	
-	
+
+
+	protected static void kickPlayerIfServerDead(final ProxiedPlayer pl, final ServerInfo sinf)
+	{
+		try {
+			sinf.ping(new Callback<ServerPing>() {
+				@Override
+				public void done(ServerPing ping, Throwable throwable) {
+					if (ping==null)
+					{
+						pl.disconnect(new TextComponent(Main.error_no_server));
+					}
+				}
+			});
+		}
+		catch (Exception e)
+		{
+			pl.disconnect(new TextComponent(Main.error_no_server));
+		}
+	}
+
 }
