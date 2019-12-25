@@ -210,7 +210,12 @@ public class ListenerClass implements Listener
 		{
 			ServerInfo sinf = ps.getServerInfo(sendbackto.get(pl.getName()));
 			sendbackto.remove(pl.getName());
-			pl.connect(sinf);
+			if (sinf.canAccess(pl)) {
+				pl.connect(sinf);
+			} else {
+				pl.sendMessage(new ComponentBuilder(Main.error_no_server).color(ChatColor.RED).create());
+				movePlayer(pl, true);
+			}
 		}
 	}
 
