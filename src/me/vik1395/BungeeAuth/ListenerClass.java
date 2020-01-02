@@ -74,6 +74,13 @@ public class ListenerClass implements Listener
 				movePlayer(sce.getPlayer(), true);
 				kickPlayerIfServerDead(sce.getPlayer(), sce.getTarget());
 			}
+			// check restricted server (for session login)
+			if(!sce.getTarget().canAccess(sce.getPlayer()))
+			{
+				sce.setCancelled(true);
+				sce.getPlayer().sendMessage(new ComponentBuilder(Main.error_no_server).color(ChatColor.RED).create());
+				movePlayer(sce.getPlayer(), true);
+			}
 			return;
 		}
 		// if no return server, kick player
@@ -210,7 +217,15 @@ public class ListenerClass implements Listener
 		{
 			ServerInfo sinf = ps.getServerInfo(sendbackto.get(pl.getName()));
 			sendbackto.remove(pl.getName());
-			pl.connect(sinf);
+			if(sinf.canAccess(pl))
+			{
+				pl.connect(sinf);
+			}
+			else
+			{
+				pl.sendMessage(new ComponentBuilder(Main.error_no_server).color(ChatColor.RED).create());
+				movePlayer(pl, true);
+			}
 		}
 	}
 
