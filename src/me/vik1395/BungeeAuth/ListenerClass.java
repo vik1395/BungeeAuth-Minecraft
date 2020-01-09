@@ -83,11 +83,17 @@ public class ListenerClass implements Listener
 			}
 			return;
 		}
-		// if no return server, kick player
+		// if no return server, send to default or kick player
 		else if (Main.strict_authlobby && (status.equals("online") || !(sendbackto.containsKey(sce.getPlayer().getName()))))
 		{
+			ServerInfo defaultServer = ProxyServer.getInstance().getServerInfo(sce.getPlayer().getPendingConnection().getListener().getDefaultServer());
 			sce.setCancelled(true);
-			sce.getPlayer().disconnect(new TextComponent(Main.error_no_server));
+			if (defaultServer.canAccess(sce.getPlayer())) {
+				sce.getPlayer().connect(defaultServer);
+				kickPlayerIfServerDead(sce.getPlayer(), defaultServer);
+			} else {
+				sce.getPlayer().disconnect(new TextComponent(Main.error_no_server));
+			}
 			return;
 		}
 	}
