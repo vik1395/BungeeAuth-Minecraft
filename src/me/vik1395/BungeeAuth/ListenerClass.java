@@ -70,16 +70,14 @@ public class ListenerClass implements Listener
 			sendbackto.put(sce.getPlayer().getName(), servername);
 			if (!(status.equals("online")))
 			{
-				sce.setCancelled(true);
-				movePlayer(sce.getPlayer(), true);
+				movePlayer(sce, true);
 				kickPlayerIfServerDead(sce.getPlayer(), sce.getTarget());
 			}
 			// check restricted server (for session login)
 			if(!sce.getTarget().canAccess(sce.getPlayer()))
 			{
-				sce.setCancelled(true);
 				sce.getPlayer().sendMessage(new ComponentBuilder(Main.error_no_server).color(ChatColor.RED).create());
-				movePlayer(sce.getPlayer(), true);
+				movePlayer(sce, true);
 			}
 			return;
 		}
@@ -87,9 +85,8 @@ public class ListenerClass implements Listener
 		else if (Main.strict_authlobby && (status.equals("online") || !(sendbackto.containsKey(sce.getPlayer().getName()))))
 		{
 			ServerInfo defaultServer = ProxyServer.getInstance().getServerInfo(sce.getPlayer().getPendingConnection().getListener().getDefaultServer());
-			sce.setCancelled(true);
 			if (defaultServer.canAccess(sce.getPlayer())) {
-				sce.getPlayer().connect(defaultServer);
+				sce.setTarget(defaultServer);
 				kickPlayerIfServerDead(sce.getPlayer(), defaultServer);
 			} else {
 				sce.getPlayer().disconnect(new TextComponent(Main.error_no_server));
@@ -200,38 +197,44 @@ public class ListenerClass implements Listener
 		}
 	}
 
-	public static void movePlayer(ProxiedPlayer pl, boolean authlobby)
+	public static void movePlayer(ServerConnectEvent sce, boolean authlobby) {
+		movePlayer(null, authlobby, sce);
+	}
+	public static void movePlayer(ProxiedPlayer pl, boolean authlobby) {
+		movePlayer(pl, authlobby, null);
+	}
+	public static void movePlayer(ProxiedPlayer pl, boolean authlobby, ServerConnectEvent sce)
 	{
+		if (sce!=null) { pl = sce.getPlayer(); }
 		ProxyServer ps = Main.plugin.getProxy();
 		Tables ct = new Tables();
 		if(authlobby)
 		{
 			ServerInfo sinf = null;
-			if(!(ps.getServerInfo(Main.authlobby)==null))
-			{
+			if(!(ps.getServerInfo(Main.authlobby)==null)) {
 				sinf = ps.getServerInfo(Main.authlobby);
-				pl.connect(sinf);
-			}
-			else
-			{
+				moveMethod(pl, sce, sinf);
+			} else {
 				pl.disconnect(new TextComponent(Main.error_authlobby));
 				System.err.println("[BungeeAuth] AuthLobby not found!");
 			}
-
-		}
-		else if(sendbackto.containsKey(pl.getName()) && !(ps.getServerInfo(sendbackto.get(pl.getName()))==null))
-		{
+		} else if(sendbackto.containsKey(pl.getName()) && !(ps.getServerInfo(sendbackto.get(pl.getName()))==null)) {
 			ServerInfo sinf = ps.getServerInfo(sendbackto.get(pl.getName()));
 			sendbackto.remove(pl.getName());
-			if(sinf.canAccess(pl))
-			{
-				pl.connect(sinf);
-			}
-			else
-			{
+			if(sinf.canAccess(pl)) {
+				moveMethod(pl, sce, sinf);
+			} else {
 				pl.sendMessage(new ComponentBuilder(Main.error_no_server).color(ChatColor.RED).create());
-				movePlayer(pl, true);
+				movePlayer(pl, true, sce);
 			}
+		}
+	}
+
+	public static void moveMethod(ProxiedPlayer pl, ServerConnectEvent sce, ServerInfo sinf) {
+		if (sce!=null) {
+			sce.setTarget(sinf);
+		} else {
+			pl.connect(sinf);
 		}
 	}
 
