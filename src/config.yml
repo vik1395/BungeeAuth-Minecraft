@@ -1,6 +1,6 @@
 # BungeeAuth Config File
 
-Use SQLite: false
+Use SQLite: true
 # Set this to true if you want to use a file based database (SQLite) rather than MySQL
 
 Host: 127.0.0.1
@@ -18,17 +18,11 @@ Password: 'pass'
 DBName: Bungee
 #The name of the MySQL database where BungeeAuth's Tables shall be created.
 
-Lobby: Lobby
-# The name of the lobby server.
-
-Fallback Lobby: Lobby2
-# The name of the fallback lobby server in case the main lobby is down.
-
 AuthLobby: AuthLobby
 # The name of the lobby where players are pushed before they authenticate. leave it same as normal lobby if you don't have an auth lobby.
 
-Fallback AuthLobby: AuthLobby2
-# The name of the fallback AuthLobby server in case the main AuthLobby is down.
+Strict AuthLobby: true
+# Only allow being in AuthLobby for sake of authentication
 
 Ask Email: false
 # Set this to True if you want the plugin to prompt users to register their email when they login to the server for the first time.
@@ -52,7 +46,7 @@ Password Tries: 5
 Wrong Password Timeout: 5
 # Timeout (in minutes) for players who spam commands. The timeout occurs if a player tries to use a BungeeAuth command more than 10 times. Set this to 0 to disable this feature.
 
-Guest Server Failsafe Check: true
+Guest Server Failsafe Check: false
 # A failsafe method that runs every 10 seconds to check if a guest player is in AuthLobby, and if not, moves them to AuthLobby.
 
 #---------------------------- PHP API AREA ----------------------------#

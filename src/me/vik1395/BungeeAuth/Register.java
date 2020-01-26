@@ -164,7 +164,7 @@ public class Register extends Command
 			{
 				ListenerClass.prelogin.get(p.getName()).cancel();
 			}
-			p.sendMessage(new ComponentBuilder(Main.force_register).color(ChatColor.GOLD).create());
+			p.sendMessage(new ComponentBuilder(Main.reg_success).color(ChatColor.GOLD).create());
 			return true;
 		} 
 		catch (SQLException e) 

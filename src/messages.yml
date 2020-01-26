@@ -35,7 +35,7 @@ welcome_login: "Welcome back!, please type /login [password]"
 welcome_register: "Welcome %player%! Please type /register [password] %email% to register yourself on this server."
 pre_login: "You must login to chat or execute commands."
 
-error_authlobby: "Error! Unable to connect to AuthLobby."
-error_lobby: "Error! Unable to connect to Lobby."
+error_authlobby: "Unable to connect to AuthLobby."
+error_no_server: "Unable to connect to server."
 
 spammed_password: "You have been temporarily muted because you entered the wrong password too many times."
