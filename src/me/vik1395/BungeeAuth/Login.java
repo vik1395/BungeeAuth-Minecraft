@@ -46,27 +46,32 @@ public class Login extends Command
 			
 			if(args.length>0&&args[0].equals("force"))
 			{
-				if(p.hasPermission("bauth.forcelogin"))
+			 	if(Main.plonline.contains(pname))
 				{
-					if(args.length>1)
+					if(p.hasPermission("bauth.forcelogin"))
 					{
-						if(forceLogin(args[1]))
+						if(args.length>1)
 						{
-							p.sendMessage(new ComponentBuilder(Main.force_login).color(ChatColor.GREEN).create());
+							if(forceLogin(args[1]))
+							{
+								p.sendMessage(new ComponentBuilder(Main.force_login).color(ChatColor.GREEN).create());
+							}
+							else
+							{
+								p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", args[1])).color(ChatColor.RED).create());
+							}
 						}
 						else
 						{
-							p.sendMessage(new ComponentBuilder(Main.reset_noreg.replace("%player%", args[1])).color(ChatColor.RED).create());
+							p.sendMessage(new ComponentBuilder("Usage: /login force [player]").color(ChatColor.RED).create());
 						}
 					}
 					else
 					{
-						p.sendMessage(new ComponentBuilder("Usage: /login force [player]").color(ChatColor.RED).create());
+						p.sendMessage(new ComponentBuilder(Main.no_perm).color(ChatColor.RED).create());
 					}
-				}
-				else
-				{
-					p.sendMessage(new ComponentBuilder(Main.no_perm).color(ChatColor.RED).create());
+				} else {
+					p.sendMessage(new ComponentBuilder(Main.pre_login).color(ChatColor.RED).create());
 				}
 				return;
 			}
